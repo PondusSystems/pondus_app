@@ -1,7 +1,20 @@
 import './PlanCard.css';
 import PlaceholderImage from '../../../../../assets/images/placeholder_image.png';
 
-const PlanCard = ({ product, handleContinue, popular = false }) => {
+const PlanCard = ({ product, handleContinue, popular = false, info }) => {
+
+    const getButtonText = () => {
+        if (!info.status) {
+            return `Go ${product.name}`;
+        }
+        else if (info.amount > product.amount) {
+            return 'Downgrade';
+        }
+        else {
+            return 'Upgrade';
+        }
+    };
+
     return (
         <div className={`plan-card-container ${popular ? 'popular-plan-card-container' : ''}`}>
             {popular &&
@@ -18,7 +31,14 @@ const PlanCard = ({ product, handleContinue, popular = false }) => {
                     <div className='duration'>/mo.</div>
                 </div>
                 <div className='btn-container'>
-                    <button className={`btn ${popular ? "popular-btn" : "non-popular-btn"}`} onClick={() => handleContinue(product.priceId)}>Go {product.name}</button>
+                    {info?.productId !== product.productId &&
+                        <button
+                            className={`btn ${popular ? "popular-btn" : "non-popular-btn"}`}
+                            onClick={() => handleContinue(product.priceId)}
+                        >
+                            {getButtonText()}
+                        </button>
+                    }
                 </div>
             </div>
         </div>

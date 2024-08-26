@@ -6,10 +6,28 @@ import { useDispatch } from 'react-redux';
 import { ShowLoading, HideLoading } from '../../../redux/loaderSlice';
 import productService from '../../../services/productService';
 import stripeService from '../../../services/stripeService';
+import subscriptionService from '../../../services/subscriptionService';
 
 const Plans = () => {
     const [products, setProducts] = useState([]);
+    const [info, setInfo] = useState({
+        status: false,
+        planName: '',
+        productId: '',
+        amount: null
+    });
     const dispatch = useDispatch();
+
+    const getSubscriptionInfo = async () => {
+        try {
+            const response = await subscriptionService.getUserSubscriptionInfo();
+            if (response.info) {
+                setInfo(response.info);
+            }
+        } catch (error) {
+            message.error(error.response.data.error);
+        }
+    };
 
     const fetchProducts = async () => {
         dispatch(ShowLoading());
@@ -17,6 +35,7 @@ const Plans = () => {
             const response = await productService.fetchAllProducts();
             if (response.products) {
                 setProducts(response.products);
+                await getSubscriptionInfo();
             }
         } catch (error) {
             message.error(error.response.data.error);
@@ -30,7 +49,9 @@ const Plans = () => {
     }, []);
 
     const handleContinue = async (priceId) => {
-        console.log('Go with: ', priceId);
+        if (info.status) {
+            return;
+        }
         dispatch(ShowLoading());
         try {
             const response = await stripeService.createCheckoutSession({ priceId });
@@ -54,7 +75,7 @@ const Plans = () => {
                         <div key={index}>
                             <>
                                 {product.type === 'Subscription' &&
-                                    <PlanCard product={product} handleContinue={handleContinue} popular={index === (products.length / 2) - 1} />
+                                    <PlanCard product={product} handleContinue={handleContinue} popular={index === (products.length / 2) - 1} info={info} />
                                 }
                             </>
                         </div>

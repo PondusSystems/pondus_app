@@ -10,6 +10,26 @@
     color: var(--secondary-color-3);
 }
 
+.billing .plan-info-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.billing .plan-info-container .plan-label {
+    font-size: var(--font-size-sub-heading);
+    font-weight: var(--font-weight-sub-heading);
+    color: var(--secondary-color-1);
+}
+
+
+.billing .plan-info-container .plan-name {
+    font-size: 20px;
+    font-weight: var(--font-weight-sub-heading);
+    color: var(--secondary-color-3);
+    height: fit-content;
+}
+
 .billing .btn {
     display: flex;
     align-items: center;

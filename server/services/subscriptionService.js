@@ -71,7 +71,8 @@ const getUserSubscriptionInfo = async (userId) => {
         return {
             status: false,
             planName: '',
-            productId: ''
+            productId: '',
+            amount: null
         };
     }
     const now = new Date();
@@ -87,12 +88,14 @@ const getUserSubscriptionInfo = async (userId) => {
         status = true;
         planName = activeSubscription.planInfo.name;
         productId = activeSubscription.planInfo.productId;
+        amount = activeSubscription.planInfo.amount
     }
 
     return {
         status,
         planName,
-        productId
+        productId,
+        amount
     };
 };
 

@@ -13,6 +13,6 @@
 .plans .cards-container {
     display: flex;
     gap: 50px;
-    align-items: flex-end;
+    /* align-items: flex-end; */
     flex-wrap: wrap;
 }
