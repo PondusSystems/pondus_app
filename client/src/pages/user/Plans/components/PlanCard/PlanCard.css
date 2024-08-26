@@ -1,0 +1,101 @@
+.plan-card-container {
+    max-width: 320px;
+}
+
+.popular-plan-card-container {
+    background-color: var(--accent-color-1);
+    border-radius: 15px;
+    padding: 0 3px 3px 3px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.plan-card-container .popular-div {
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 700px;
+    color: var(--secondary-color-3);
+}
+
+.plan-card {
+    padding: 30px 20px 40px 20px;
+    background-color: white;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.plan-card .title-container .img {
+    width: 100px;
+    height: 100px;
+}
+
+.plan-card .title {
+    font-size: var(--font-size-heading);
+    font-weight: var(--font-weight-heading);
+    color: var(--secondary-color-1);
+    text-align: center;
+}
+
+.plan-card .description {
+    margin-top: 40px;
+    text-align: center;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-base);
+    color: var(--secondary-color-2);
+    max-width: 88%;
+}
+
+.plan-card .price-container {
+    margin-top: 70px;
+    display: flex;
+    align-items: center;
+}
+
+.plan-card .price {
+    font-size: var(--font-size-heading);
+    font-weight: var(--font-weight-heading);
+    color: var(--secondary-color-1);
+}
+
+.plan-card .duration {
+    font-size: 21px;
+    font-weight: 700;
+    color: var(--secondary-color-1);
+}
+
+.plan-card .btn-container {
+    margin-top: 100px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.plan-card .btn-container .btn {
+    font-size: var(--font-size-sub-heading);
+    font-weight: var(--font-weight-heading);
+    color: var(--secondary-color-1);
+    border: none;
+    border-radius: 35px;
+    width: 100%;
+    max-width: 280px;
+    padding: 10px 0;
+    cursor: pointer;
+
+    &:hover {
+        opacity: 0.7;
+    }
+}
+
+.plan-card .btn-container .popular-btn {
+    background-color: var(--accent-color-1);
+}
+
+.plan-card .btn-container .non-popular-btn {
+    background-color: var(--primary-color-1);
+}

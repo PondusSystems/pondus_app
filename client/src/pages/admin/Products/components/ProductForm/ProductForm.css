@@ -1,0 +1,86 @@
+.product-form {
+    padding: 20px;
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.product-form .input-form {
+    flex: 1;
+    background-color: white;
+    padding: 20px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border-radius: 5px;
+    height: fit-content;
+}
+
+.product-form .input-form .title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--secondary-color-3);
+}
+
+.product-form .input-form .input-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-form .input-form .input-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.product-form .input-form .label {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--secondary-color-3);
+}
+
+.product-form .input-form .input {
+    width: 60%;
+    border: 1px solid var(--secondary-color-3);
+    padding: 6px 5px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--secondary-color-3);
+    box-sizing: border-box;
+}
+
+.product-form .input-form .input-error {
+    border: 1px solid red;
+}
+
+.product-form .input-form .error {
+    color: red;
+    font-size: 15px;
+    margin-top: 3px;
+    width: fit-content;
+    align-self: flex-end;
+}
+
+.product-form .input-form .save-btn {
+    width: 120px;
+    height: 40px;
+    border: none;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--secondary-color-1);
+    border-radius: 5px;
+    background-color: var(--accent-color-1);
+    cursor: pointer;
+    align-self: flex-end;
+    margin-top: 10px;
+
+    &:hover {
+        opacity: 0.7;
+    }
+}
+
+.product-form .input-form .save-btn:disabled {
+    cursor: not-allowed;
+}

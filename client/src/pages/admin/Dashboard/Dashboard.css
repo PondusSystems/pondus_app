@@ -1,0 +1,31 @@
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.dashboard .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dashboard .title {
+    font-size: var(--font-size-heading);
+    font-weight: var(--font-weight-heading);
+    color: var(--secondary-color-3);
+}
+
+.dashboard .counter-card-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+
+.dashboard .bottom-div {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}

@@ -1,0 +1,18 @@
+.plans {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.plans .main-title {
+    font-size: var(--font-size-heading);
+    font-weight: var(--font-weight-heading);
+    color: var(--secondary-color-3);
+}
+
+.plans .cards-container {
+    display: flex;
+    gap: 50px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}

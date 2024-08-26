@@ -1,0 +1,20 @@
+.page {
+  display: flex;
+  overflow-x: hidden;
+}
+
+.content {
+  background-color: var(--bg-color);
+  min-height: 100vh;
+}
+
+.margin-content {
+  width: calc(100% - 288px);
+  margin-left: 288px;
+  padding: 60px 40px;
+  box-sizing: border-box;
+}
+
+.full-content {
+  width: 100%;
+}

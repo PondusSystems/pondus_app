@@ -1,0 +1,20 @@
+.forget-password .staff-resend-email {
+    margin-top: 80px;
+}
+
+.forget-password .staff-resend-email .resend-btn {
+    margin-top: 21px;
+}
+
+.forget-password .staff-resend-email .navigation-1 {
+    margin-top: 15px;
+}
+
+.forget-password .staff-resend-email .navigation-2 {
+    margin-top: 60px;
+}
+
+.forget-password .staff-resend-email .back-link {
+    color: #0000EE;
+    cursor: pointer;
+}

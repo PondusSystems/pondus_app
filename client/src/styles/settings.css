@@ -1,0 +1,137 @@
+.settings {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.settings .main-title {
+    font-size: var(--font-size-heading);
+    font-weight: var(--font-weight-heading);
+    color: var(--secondary-color-3);
+}
+
+.settings .settings-form {
+    display: flex;
+    gap: 20px;
+}
+
+.settings .settings-form .container {
+    padding: 30px 20px;
+    box-sizing: border-box;
+    background-color: white;
+    border-radius: 5px;
+    flex: 1;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.settings .settings-form .container .title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--secondary-color-3);
+}
+
+.settings-form .container .input-form {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.settings-form .container .input-form .input-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-form .container .input-form .input-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.settings-form .container .input-form .label-container {
+    max-width: 32%;
+}
+
+.settings-form .container .input-form .label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--secondary-color-3);
+    width: fit-content;
+}
+
+.settings-form .container .input-form .input {
+    width: 65%;
+    max-width: 300px;
+    border: 1px solid var(--secondary-color-3);
+    padding: 6px 5px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--secondary-color-3);
+    box-sizing: border-box;
+}
+
+.settings-form .container .input-form .pass-container .input {
+    width: 100%;
+}
+
+.settings-form .container .input-form .pass-container {
+    width: 65%;
+    max-width: 300px;
+}
+
+.settings-form .container .input-form .input-error {
+    border: 1px solid red;
+}
+
+.settings-form .container .input-form .error {
+    color: red;
+    font-size: 15px;
+    margin-top: 3px;
+    width: fit-content;
+    align-self: flex-end;
+}
+
+.settings-form .container .input-form .eye-icon {
+    position: absolute;
+    transform: translate(-23px, 6px);
+    cursor: pointer;
+}
+
+.settings-form .container .input-form .btn-container {
+    display: flex;
+    gap: 20px;
+    justify-content: flex-end;
+}
+
+.settings-form .container .input-form .btn {
+    width: 80px;
+    height: 40px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+
+    &:hover {
+        opacity: 0.7;
+    }
+}
+
+.settings-form .container .input-form .discard-btn {
+    color: white;
+    background-color: #E71D36;
+}
+
+.settings-form .container .input-form .save-btn {
+    color: var(--secondary-color-1);
+    background-color: var(--accent-color-1);
+}
+
+.settings-form .container .input-form .btn:disabled {
+    cursor: not-allowed;
+}

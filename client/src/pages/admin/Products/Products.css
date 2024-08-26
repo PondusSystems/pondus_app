@@ -1,0 +1,39 @@
+.products {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.products .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.products .top-bar .btn-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.products .top-bar .create-btn {
+    width: 130px;
+    height: 40px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--secondary-color-1);
+    background-color: var(--accent-color-1);
+    cursor: pointer;
+
+    &:hover {
+        opacity: 0.7;
+    }
+}
+
+.products .title {
+    font-size: var(--font-size-heading);
+    font-weight: var(--font-weight-heading);
+    color: var(--secondary-color-3);
+}

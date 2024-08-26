@@ -1,0 +1,46 @@
+.pagination-handler {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.pagination-handler .count-bar {
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--secondary-color-1);
+}
+
+.pagination-handler .count-bar .total {
+    color: #12121282
+}
+
+.pagination-handler .pages {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pagination-handler .pages .page-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    color: var(--secondary-color-1);
+    cursor: pointer;
+}
+
+.pagination-handler .pages .active-page-btn {
+    background-color: rgba(0, 0, 0, 0.08);
+    border: 1px solid #000000;
+}
+
+.pagination-handler .pages .non-active-page-btn {
+    border: 1px solid #D0D5DD;
+}
+
+.pagination-handler .pages .disabled-icon path {
+    stroke: #12121282;
+}

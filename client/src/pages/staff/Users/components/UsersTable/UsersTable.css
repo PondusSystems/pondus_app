@@ -1,0 +1,115 @@
+.users-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+.users-table thead th {
+    text-align: left;
+    padding: 5px 20px;
+    border-radius: 5px;
+
+    &:hover {
+        background-color: rgb(234, 234, 234);
+        cursor: pointer;
+    }
+}
+
+.users-table thead .head-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+}
+
+.users-table thead .head-container .icon {
+    cursor: pointer;
+}
+
+.users-table thead .head-container .icon svg {
+    width: 8px;
+    height: 4px;
+}
+
+.users-table tbody tr {
+    background-color: white;
+}
+
+.users-table tbody td {
+    padding: 15px 20px;
+}
+
+.users-table tbody tr td:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.users-table tbody tr td:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+
+.users-table tbody td .text {
+    font-size: 14px;
+    font-weight: 400;
+    color: #030229;
+}
+
+.users-table tbody td .label {
+    padding: 5px 22px 5px 18px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.users-table tbody td .yellow-label {
+    background-color: #FFD66B;
+}
+
+.users-table tbody td .green-label {
+    background-color: var(--accent-color-1);
+}
+
+.users-table tbody td .red-label {
+    background-color: #E71D36;
+}
+
+.users-table tbody td .name-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.users-table tbody .name-container .user-image {
+    width: 30px;
+    height: 30px;
+}
+
+.users-table tbody .btn-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.users-table tbody .btn {
+    width: 80px;
+    height: 27px;
+    font-size: 14px;
+    font-weight: 400;
+    border: none;
+    cursor: pointer;
+
+    &:hover {
+        opacity: 0.7;
+    }
+}
+
+.users-table tbody .edit-btn {
+    background-color: #F7F7F8;
+    color: #121212;
+}
+
+.users-table tbody .delete-btn {
+    background-color: #E71D36;
+    color: white;
+    border-radius: 4px;
+}

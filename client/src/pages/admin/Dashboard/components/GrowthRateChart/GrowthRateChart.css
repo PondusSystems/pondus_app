@@ -1,0 +1,35 @@
+.growth-rate-chart {
+    border-radius: 5px;
+    flex: 1;
+    background-color: white;
+}
+
+.growth-rate-chart .chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 30px 40px;
+}
+
+.growth-rate-chart .chart-title {
+    font-size: 22px;
+    color: var(--secondary-color-3);
+    font-weight: 700;
+}
+
+.growth-rate-chart .chart-percentage {
+    font-size: 22px;
+    color: #40A356;
+    font-weight: 700;
+}
+
+.growth-rate-chart-container {
+    width: 100%;
+    height: 200px;
+    position: relative;
+}
+
+.growth-rate-chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+}

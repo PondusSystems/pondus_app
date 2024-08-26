@@ -1,0 +1,28 @@
+.counter-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 29px;
+    border-radius: 5px;
+    flex: 1;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.counter-card .text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.counter-card .value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #000000;
+}
+
+.counter-card .description {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--secondary-color-3);
+}

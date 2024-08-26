@@ -1,0 +1,30 @@
+.billing {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.billing .title {
+    font-size: var(--font-size-heading);
+    font-weight: var(--font-weight-heading);
+    color: var(--secondary-color-3);
+}
+
+.billing .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--accent-color-1);
+    color: var(--secondary-color-1);
+    font-weight: var(--font-weight-heading);
+    font-size: var(--font-size-base);
+    max-width: 180px;
+    border: none;
+    border-radius: 8px;
+    height: 50px;
+    cursor: pointer;
+
+    &:hover {
+        opacity: 0.8;
+    }
+}
