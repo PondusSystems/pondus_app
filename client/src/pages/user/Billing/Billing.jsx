@@ -12,6 +12,7 @@ const Billing = () => {
         status: false,
         planName: '',
         productId: '',
+        subscriptionId: '',
         amount: null
     })
 

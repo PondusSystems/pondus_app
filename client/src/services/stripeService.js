@@ -19,6 +19,14 @@ const stripeService = {
             throw error;
         }
     },
+    updateSubscription: async (payload) => {
+        try {
+            const response = await axiosInstance.patch(`${BASE_URL}/update-subscription`, payload);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
 };
 
 export default stripeService;

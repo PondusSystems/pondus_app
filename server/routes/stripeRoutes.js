@@ -24,4 +24,12 @@ router.post(
     controller.CreateBillingPortalSession
 );
 
+router.patch(
+    "/update-subscription",
+    authMiddleware.authenticateRequest,
+    authMiddleware.verifyRole(['user']),
+    validationMiddleware.validateRequest(stripeSchemas.updateSubscriptionSchema),
+    controller.UpdateSubscription
+);
+
 module.exports = router;

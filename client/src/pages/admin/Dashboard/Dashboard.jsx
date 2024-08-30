@@ -11,14 +11,14 @@ const Dashboard = () => {
                 <div className='title'>Dashboard</div>
             </div>
             <TurnoverGraph />
+            <div className='bottom-div'>
+                <CLVSpeedometer />
+                <GrowthRateChart />
+            </div>
             <div className='counter-card-container'>
                 <CounterCard value="171" description="Active members (on average)" />
                 <CounterCard value="133" description="New members" />
                 <CounterCard value="89" description="Lost members" />
-            </div>
-            <div className='bottom-div'>
-                <CLVSpeedometer />
-                <GrowthRateChart />
             </div>
         </div>
     )

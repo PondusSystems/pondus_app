@@ -29,7 +29,12 @@ const StripeHooks = async (req, res, next) => {
             case 'invoice.payment_succeeded':
                 const data = await stripeService.handlePaymentSucceededEvent(event);
                 await subscriptionService.addSubscription(data);
-                res.status(200).json({ message: 'Event worked!' });
+                res.status(200).json({ message: 'Subscription created!' });
+                break;
+            case 'customer.subscription.updated':
+                const subscription = await stripeService.handleSubscriptionUpdatedEvent(event);
+                await subscriptionService.updateSubscription(subscription);
+                res.status(200).json({ message: 'Subscription updated!' });
                 break;
             // case 'checkout.session.expired':
             //     await stripeService.handleCheckoutExpiredEvent(event);
@@ -42,7 +47,7 @@ const StripeHooks = async (req, res, next) => {
     }
 };
 
-CreateBillingPortalSession = async (req, res, next) => {
+const CreateBillingPortalSession = async (req, res, next) => {
     try {
         const CLIENT_URL = req.get('origin');
         const userId = req.user?.id;
@@ -54,8 +59,26 @@ CreateBillingPortalSession = async (req, res, next) => {
     }
 };
 
+const UpdateSubscription = async (req, res, next) => {
+    try {
+        const { newPriceId } = req.body;
+        const userId = req.user?.id;
+        const { subscriptionId } = await subscriptionService.getUserSubscriptionInfo(userId);
+        if (!subscriptionId) {
+            return res.status(400).json({ error: 'No active subscription found!' });
+        }
+        const subscription = await stripeService.fetchSubscription(subscriptionId);
+        const subscriptionItemId = subscription.items.data[0].id;
+        await stripeService.updateSubscription(subscriptionId, subscriptionItemId, newPriceId);
+        res.status(200).json({ message: 'Subscription updated successfully!' });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     CreateCheckoutSession,
     StripeHooks,
-    CreateBillingPortalSession
+    CreateBillingPortalSession,
+    UpdateSubscription
 };

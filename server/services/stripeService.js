@@ -51,9 +51,14 @@ const fetchProductInfo = async (productId) => {
         // console.log('Recurring: ', productInfo.prices[0].recurring);
         return productInfo;
     } catch (err) {
-        const error = new Error('Error while fetching product info from Stripe!');
-        error.code = 400;
-        throw error;
+        if (err.code) {
+            throw err;
+        }
+        else {
+            const error = new Error('Error while fetching product info from Stripe!');
+            error.code = 400;
+            throw error;
+        }
     }
 };
 
@@ -97,7 +102,6 @@ const createCheckoutSession = async (priceId, stripeCustomerId, CLIENT_URL) => {
         );
         return session.url;
     } catch (error) {
-        console.log('Checkout Error: ', error);
         const newError = new Error('Unable to create checkout session!');
         newError.code = 400;
         throw newError;
@@ -109,7 +113,6 @@ const constructEvent = async (sig, data) => {
         const event = stripe.webhooks.constructEvent(data, sig, process.env.STRIPE_WEBHOOKS_KEY);
         return event;
     } catch (err) {
-        console.error('Webhook Error:', err.message);
         const newError = new Error(`Unable to construct event!`);
         newError.code = 400;
         throw newError;
@@ -153,6 +156,41 @@ const handlePaymentSucceededEvent = async (event) => {
         };
         return data;
     } catch (error) {
+        const newError = new Error(`Unable to fetch info from event!`);
+        newError.code = 400;
+        throw newError;
+    }
+};
+
+const handleSubscriptionUpdatedEvent = async (event) => {
+    try {
+        const subscription = event.data.object;
+        // console.log('Subscription: ', subscription);
+        const customerId = subscription.customer;
+
+        const userId = await commonService.fetchUserId({ stripeCustomerId: customerId });
+        const subscriptionId = subscription.id;
+        const price = subscription.items.data[0].price;
+        const productId = price.product;
+        const { name, description } = await stripe.products.retrieve(productId);
+        const planInfo = {
+            productId,
+            name,
+            description,
+            priceId: price.id,
+            amount: price.unit_amount / 100,
+            currency: price.currency,
+        }
+        const data = {
+            user: userId,
+            customerId,
+            subscriptionInfo: {
+                subscriptionId,
+                planInfo,
+            }
+        };
+        return data;
+    } catch (error) {
         console.error('Event Error:', error);
         const newError = new Error(`Unable to fetch info from event!`);
         newError.code = 400;
@@ -174,20 +212,56 @@ const createBillingPortalSession = async (customerId, CLIENT_URL) => {
 
         return session.url;
     } catch (error) {
-        console.log('Billing Error: ', error);
-        const newError = new Error(`Unable to create billing portal session!`);
+        if (error.code) {
+            throw error;
+        }
+        else {
+            const newError = new Error(`Unable to create billing portal session!`);
+            newError.code = 400;
+            throw newError;
+        }
+    }
+};
+
+const fetchSubscription = async (subscriptionId) => {
+    try {
+        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+        return subscription;
+    } catch (error) {
+        const newError = new Error(`Unable to fetch subscription!`);
+        newError.code = 404;
+        throw newError;
+    }
+};
+
+const updateSubscription = async (subscriptionId, subscriptionItemId, newPriceId) => {
+    try {
+        const updatedSubscription = await stripe.subscriptions.update(subscriptionId, {
+            items: [
+                {
+                    id: subscriptionItemId,
+                    price: newPriceId,
+                },
+            ],
+            proration_behavior: 'create_prorations', // Automatically handle proration
+        });
+
+        return updatedSubscription;
+    } catch (error) {
+        const newError = new Error(`Unable to update subscription!`);
         newError.code = 400;
         throw newError;
     }
 };
 
-const test = async (priceId) => {
-    const price = await stripe.prices.retrieve(priceId);
-    console.log(price);
+const test = async (subscriptionId) => {
+    const res = await fetchSubscription(subscriptionId);
+    console.log('Res: ', res);
 };
 
 const priceId = 'price_1Phsi2L3hPHcFVDk8ICs0GMh';
-// test(priceId);
+const subscriptionId = 'sub_1PrPbwL3hPHcFVDkTR2m0LhW';
+// test(subscriptionId);
 
 module.exports = {
     fetchProductInfo,
@@ -195,6 +269,9 @@ module.exports = {
     updateCustomerEmail,
     constructEvent,
     handlePaymentSucceededEvent,
+    handleSubscriptionUpdatedEvent,
     createCheckoutSession,
-    createBillingPortalSession
+    createBillingPortalSession,
+    fetchSubscription,
+    updateSubscription
 }

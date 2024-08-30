@@ -14,6 +14,7 @@ const Plans = () => {
         status: false,
         planName: '',
         productId: '',
+        subscriptionId: '',
         amount: null
     });
     const dispatch = useDispatch();
@@ -49,15 +50,19 @@ const Plans = () => {
     }, []);
 
     const handleContinue = async (priceId) => {
-        if (info.status) {
-            return;
-        }
         dispatch(ShowLoading());
         try {
-            const response = await stripeService.createCheckoutSession({ priceId });
-            if (response.url) {
-                console.log('URL: ', response.url);
-                window.location.href = response.url;
+            if (info.status) {
+                const response = await stripeService.updateSubscription({ newPriceId: priceId });
+                await getSubscriptionInfo();
+                message.success(response.message);
+            }
+            else {
+                const response = await stripeService.createCheckoutSession({ priceId });
+                if (response.url) {
+                    console.log('URL: ', response.url);
+                    window.location.href = response.url;
+                }
             }
         } catch (error) {
             message.error(error.response.data.error);

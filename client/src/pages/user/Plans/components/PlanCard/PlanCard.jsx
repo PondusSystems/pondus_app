@@ -4,10 +4,10 @@ import PlaceholderImage from '../../../../../assets/images/placeholder_image.png
 const PlanCard = ({ product, handleContinue, popular = false, info }) => {
 
     const getButtonText = () => {
-        if (!info.status) {
+        if (!info?.status) {
             return `Go ${product.name}`;
         }
-        else if (info.amount > product.amount) {
+        else if (info.amount > product.price) {
             return 'Downgrade';
         }
         else {
