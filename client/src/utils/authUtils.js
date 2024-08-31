@@ -4,6 +4,7 @@ import { menuItems } from '../constants/menuItems';
 const isAuthenticated = () => {
     const token = Cookies.get('pondus-jwt-token');
     return !!token;
+    
 };
 
 const verifyAuthorization = (role) => {
