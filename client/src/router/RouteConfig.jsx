@@ -16,6 +16,7 @@ import EmployeeSettings from '../pages/employee/Settings/Settings.jsx';
 import Plans from '../pages/user/Plans/Plans.jsx';
 import Success from '../pages/user/Success/Success.jsx';
 import AuthenticatedRedirect from '../components/AuthenticatedRedirect/AuthenticatedRedirect.jsx';
+import Redirect from '../pages/common/Redirect/Redirect.jsx';
 // import Home from '../pages/common/Home/Home.jsx'
 import NotFound from '../pages/common/NotFound/NotFound.jsx';
 
@@ -25,6 +26,7 @@ const routes = [
   { path: "/staff/forget-password", element: <AuthenticatedRedirect><StaffForgetPassword /></AuthenticatedRedirect>, protected: false, showSidebar: false },
   { path: "/staff/reset-password", element: <AuthenticatedRedirect><StaffResetPassword /></AuthenticatedRedirect>, protected: false, showSidebar: false },
   { path: "/staff/common/users", element: <StaffUsers />, protected: true, showSidebar: true },
+  { path: "/staff", element: <Redirect />, protected: true, showSidebar: true },
 
   //admin
   { path: "/staff/admin/dashboard", element: <AdminDashboard />, protected: true, showSidebar: true },
@@ -45,7 +47,7 @@ const routes = [
   { path: "/plans", element: <Plans />, protected: true, showSidebar: true },
   { path: "/success", element: <Success />, protected: true, showSidebar: false },
   { path: "/settings", element: <Settings />, protected: true, showSidebar: true },
-
+  { path: "/", element: <Redirect />, protected: true, showSidebar: true },
 
   //not found
   { path: "*", element: <NotFound />, protected: false, showSidebar: false },
