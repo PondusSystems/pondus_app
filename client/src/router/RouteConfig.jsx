@@ -17,7 +17,6 @@ import Plans from '../pages/user/Plans/Plans.jsx';
 import Success from '../pages/user/Success/Success.jsx';
 import AuthenticatedRedirect from '../components/AuthenticatedRedirect/AuthenticatedRedirect.jsx';
 import Redirect from '../pages/common/Redirect/Redirect.jsx';
-// import Home from '../pages/common/Home/Home.jsx'
 import NotFound from '../pages/common/NotFound/NotFound.jsx';
 
 const routes = [
@@ -42,7 +41,6 @@ const routes = [
   { path: "/register", element: <AuthenticatedRedirect><Register /></AuthenticatedRedirect>, protected: false, showSidebar: false },
   { path: "/forget-password", element: <AuthenticatedRedirect><ForgetPassword /></AuthenticatedRedirect>, protected: false, showSidebar: false },
   { path: "/reset-password", element: <AuthenticatedRedirect><ResetPassword /></AuthenticatedRedirect>, protected: false, showSidebar: false },
-  // { path: "/", element: <Home />, protected: true, showSidebar: true },
   { path: "/billing", element: <Billing />, protected: true, showSidebar: true },
   { path: "/plans", element: <Plans />, protected: true, showSidebar: true },
   { path: "/success", element: <Success />, protected: true, showSidebar: false },
