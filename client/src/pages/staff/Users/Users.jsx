@@ -198,7 +198,9 @@ const Users = () => {
                 <div className='btn-container'>
                     <input type='text' className='search-btn' value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
                     <IoSearch size={30} className='search-icon' onClick={handleSearch} />
-                    <button className='create-btn' onClick={handleAdd}>Create user</button>
+                    {!status &&
+                        <button className='create-btn' onClick={handleAdd}>Create user</button>
+                    }
                 </div>
             </div>
             {(data && data.length > 0) ?
