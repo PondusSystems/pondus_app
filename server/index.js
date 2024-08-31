@@ -29,7 +29,7 @@ app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use('/static', express.static(path.join(__dirname, 'static')));
 
-// Connection URL
+// DB Connection
 const DB = process.env.DB_URI;
 connectDB(DB);
 
@@ -40,6 +40,8 @@ app.get('/', (req, res) => {
 
 // Routes
 app.use("/api", routes);
+
+//Error Handler
 app.use(errorHandlerMiddleware);
 
 app.listen(port, () => {

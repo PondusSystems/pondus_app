@@ -1,5 +1,6 @@
 const path = require('path');
 const userService = require('../services/userService');
+const subscriptionService = require('../services/subscriptionService');
 const emailService = require('../services/emailService');
 const templateUtils = require('../utils/templateUtils');
 
@@ -157,10 +158,13 @@ const SearchEmployees = async (req, res, next) => {
 
 const SearchUsers = async (req, res, next) => {
   try {
-    const { pageIndex, limit, searchQuery } = req.query;
+    const { pageIndex, limit, searchQuery, status } = req.query;
     const parsedPageIndex = parseInt(pageIndex);
     const parsedLimit = parseInt(limit);
     const result = await userService.searchUsers(parsedPageIndex, parsedLimit, searchQuery, "user");
+    if (status && result.users && result.users.length > 0) {
+      result.users = result.users.filter(user => user.status.toLowerCase() === status.toLowerCase());
+    }
     res.status(200).json({ result });
   } catch (error) {
     next(error);

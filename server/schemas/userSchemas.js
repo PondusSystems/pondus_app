@@ -65,6 +65,7 @@ const searchUsersSchema = yup.object().shape({
   pageIndex: yup.number().required('Page index is required'),
   limit: yup.number().positive('Limit must be positive').required('Limit is required'),
   searchQuery: yup.string().trim(),
+  status: yup.string().trim(),
 });
 
 const changeUserPasswordSchema = yup.object().shape({

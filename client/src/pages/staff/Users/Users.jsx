@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import './Users.css';
 import { IoSearch } from "react-icons/io5";
+import { useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { message, Empty } from 'antd';
 import { ShowLoading, HideLoading } from '../../../redux/loaderSlice';
@@ -78,6 +79,9 @@ const Users = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const limit = 10;
     const dispatch = useDispatch();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const status = queryParams.get('status');
 
     const fetchMembers = async () => {
         dispatch(ShowLoading());
@@ -85,7 +89,8 @@ const Users = () => {
             const query = {
                 pageIndex,
                 limit,
-                searchQuery
+                searchQuery,
+                status: status || ''
             }
             const response = await userService.searchUsers(query);
             if (response.result) {
@@ -111,7 +116,7 @@ const Users = () => {
 
     useEffect(() => {
         fetchMembers();
-    }, [pageIndex]);
+    }, [pageIndex, location]);
 
     const handleSearch = () => {
         if (pageIndex !== 1) {
