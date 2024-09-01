@@ -18,3 +18,12 @@
 .full-content {
   width: 100%;
 }
+
+@media only screen and (max-width: 768px) {
+  .margin-content {
+    width: 100%;
+    margin: 0;
+    padding: 50px 20px 30px 20px;
+    box-sizing: border-box;
+  }
+}

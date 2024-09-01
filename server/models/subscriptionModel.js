@@ -53,6 +53,10 @@ const subscriptionsArraySchema = new mongoose.Schema(
             type: planSchema,
             required: true
         },
+        paidAmount: {
+            type: Number,
+            required: true
+        },
         billingReason: {
             type: String,
             required: true,

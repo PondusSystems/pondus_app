@@ -37,7 +37,7 @@ const updateSubscription = async (data) => {
         const activeSubscription = existingUserSubscription.subscriptions.find(sub => {
             return sub.subscriptionId === subscriptionInfo.subscriptionId && sub.endDate >= now && sub.status === 'active';
         });
-        if(!activeSubscription) {
+        if (!activeSubscription) {
             const newError = new Error(`No active subscription with this subscription id found!`);
             newError.code = 400;
             throw newError;
@@ -349,7 +349,7 @@ const getTurnoverData = async (year, period) => {
         {
             $project: {
                 period: groupBy,
-                amount: "$subscriptions.planInfo.amount"
+                amount: "$subscriptions.paidAmount"
             }
         },
         {
@@ -373,7 +373,7 @@ const getTurnoverData = async (year, period) => {
     return result;
 };
 
-// getTurnoverData(2024, 'monthly');
+getTurnoverData(2024, 'monthly');
 
 const getGrowthRateData = async (year, period) => {
     // const turnoverData = await getTurnoverData(year, period);

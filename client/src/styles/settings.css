@@ -135,3 +135,9 @@
 .settings-form .container .input-form .btn:disabled {
     cursor: not-allowed;
 }
+
+@media only screen and (max-width: 768px) {
+    .settings .settings-form {
+        flex-direction: column;
+    }
+}

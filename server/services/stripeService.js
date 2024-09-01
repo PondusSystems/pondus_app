@@ -137,9 +137,10 @@ const handlePaymentSucceededEvent = async (event) => {
             name,
             description,
             priceId: invoice.lines.data[0].price.id,
-            amount: invoice.amount_paid / 100,
+            amount: invoice.lines.data[0].price.unit_amount / 100,
             currency: invoice.currency,
-        }
+        };
+        const paidAmount = invoice.amount_paid / 100;
         const startDate = new Date(invoice.lines.data[0].period.start * 1000).toISOString();
         const endDate = new Date(invoice.lines.data[0].period.end * 1000).toISOString();
         const data = {
@@ -149,6 +150,7 @@ const handlePaymentSucceededEvent = async (event) => {
                 subscriptionId,
                 chargeId,
                 planInfo,
+                paidAmount,
                 billingReason,
                 startDate,
                 endDate
@@ -253,15 +255,6 @@ const updateSubscription = async (subscriptionId, subscriptionItemId, newPriceId
         throw newError;
     }
 };
-
-const test = async (subscriptionId) => {
-    const res = await fetchSubscription(subscriptionId);
-    console.log('Res: ', res);
-};
-
-const priceId = 'price_1Phsi2L3hPHcFVDk8ICs0GMh';
-const subscriptionId = 'sub_1PrPbwL3hPHcFVDkTR2m0LhW';
-// test(subscriptionId);
 
 module.exports = {
     fetchProductInfo,
