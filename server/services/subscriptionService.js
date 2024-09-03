@@ -61,7 +61,7 @@ const getUserSubscriptionStatus = async (userId) => {
     const subscription = await Subscription.findOne({ user: userId });
     if (!subscription) {
         return {
-            status: '',
+            status: [],
             paymentStatus: 'Failed'
         };
     }
@@ -81,13 +81,18 @@ const getUserSubscriptionStatus = async (userId) => {
     });
 
     // Determine status and paymentStatus
-    let status = 'Lost';
-    if (isNew) {
-        status = 'New';
+    let status = [];
+    if (isActive, isNew) {
+        status = ['New', 'Active'];
+        paymentStatus = 'Success';
+    } else if (isNew) {
+        status = ['New'];
         paymentStatus = 'Success';
     } else if (isActive) {
-        status = 'Active';
+        status = ['Active'];
         paymentStatus = 'Success';
+    } else {
+        status = ['Lost'];
     }
 
     return {
@@ -149,18 +154,23 @@ const getActiveMembers = async () => {
         {
             $group: {
                 _id: "$user",  // Group by user
-                count: { $sum: 1 }  // Count the number of active subscriptions
             }
         }
     ]);
 
-    console.log("Active Members: ", activeMembers);
+    // console.log("Active Members: ", activeMembers);
     return activeMembers;
 };
 
 // getActiveMembers();
 
-const getNewMembers = async () => {
+const getActiveMembersCount = async () => {
+    const activeUsers = await getActiveMembers();
+    // console.log("Active Members: ", activeUsers);
+    return activeUsers.length;
+};
+
+const getNewMembersCount = async () => {
     const thirtyDaysAgo = moment().subtract(30, 'days').toDate();
     const now = new Date();
 
@@ -177,24 +187,22 @@ const getNewMembers = async () => {
         {
             $group: {
                 _id: "$user",  // Group by user
-                count: { $sum: 1 }  // Count the number of new subscriptions
             }
         }
     ]);
 
-    console.log("New Members: ", newMembers);
-    return newMembers;
+    // console.log("New Members: ", newMembers.length);
+    return newMembers.length;
 };
 
-// getNewMembers();
+// getNewMembersCount();
 
-const getLostMembers = async () => {
+const getLostMembersCount = async () => {
     const now = new Date();
 
     const activeUsers = await getActiveMembers();
 
     const activeUserIds = activeUsers.map(user => user._id);
-    console.log('Active Ids: ', activeUserIds);
 
     // Then, find users who were previously subscribed but are now lost
     const lostMembers = await Subscription.aggregate([
@@ -208,16 +216,15 @@ const getLostMembers = async () => {
         {
             $group: {
                 _id: "$user",  // Group by user
-                count: { $sum: 1 }  // Count the number of lost subscriptions
             }
         }
     ]);
 
-    console.log("Lost Members: ", lostMembers);
-    return lostMembers;
+    // console.log("Lost Members: ", lostMembers.length);
+    return lostMembers.length;
 };
 
-// getLostMembers();
+// getLostMembersCount();
 // labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "July", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
 
@@ -328,8 +335,11 @@ const getTurnoverData = async (year, period) => {
             labels: ['H1', 'H2']
         },
         yearly: {
+            // groupBy: { $year: "$subscriptions.startDate" },
+            // labels: [year] 
             groupBy: { $year: "$subscriptions.startDate" },
-            labels: [year]  // For yearly, you typically have only one year as label
+            labels: Array.from({ length: 5 }, (_, i) => year - 4 + i)  // Last 5 years including the current year
+
         }
     };
 
@@ -362,18 +372,17 @@ const getTurnoverData = async (year, period) => {
             $sort: { "_id": 1 }
         }
     ]);
-    // console.log('TurnOver Data: ', turnoverData);
 
     const result = labels.map((label, labelIndex) => {
         const found = turnoverData.find(item => period === 'monthly' ? item._id === labelIndex + 1 : item._id === label);
         return { period: label, totalTurnover: found ? found.totalTurnover : 0 };
     });
 
-    console.log(`${period.charAt(0).toUpperCase() + period.slice(1)} Turnover: `, result);
+    // console.log(`${period.charAt(0).toUpperCase() + period.slice(1)} Turnover: `, result);
     return result;
 };
 
-getTurnoverData(2024, 'monthly');
+// getTurnoverData(2024, 'yearly');
 
 const getGrowthRateData = async (year, period) => {
     // const turnoverData = await getTurnoverData(year, period);
@@ -409,5 +418,9 @@ module.exports = {
     addSubscription,
     updateSubscription,
     getUserSubscriptionStatus,
-    getUserSubscriptionInfo
+    getUserSubscriptionInfo,
+    getTurnoverData,
+    getActiveMembersCount,
+    getNewMembersCount,
+    getLostMembersCount
 }

@@ -16,6 +16,25 @@
     color: var(--secondary-color-3);
 }
 
+.dashboard .filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dashboard .year-picker {
+    padding: 6px 11px;
+}
+
+.dashboard .view-selector {
+    width: 120px;
+    height: fit-content;
+}
+
+.dashboard .view-selector .ant-select-selector {
+    padding: 2px 11px;
+}
+
 .dashboard .counter-card-container {
     display: flex;
     align-items: center;

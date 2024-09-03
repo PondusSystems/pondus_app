@@ -40,14 +40,14 @@ const UsersTable = ({ data, handleEdit, handleDelete }) => {
         });
     };
 
-    const getLabel = (user) => {
-        if (user.status === 'New') {
+    const getLabelClassName = (status) => {
+        if (status.includes('New')) {
             return 'yellow-label'
         }
-        else if (user.status === 'Active') {
+        else if (status.includes('Active')) {
             return 'green-label'
         }
-        else if (user.status === 'Lost') {
+        else if (status.includes('Lost')) {
             return 'red-label'
         }
         else {
@@ -136,7 +136,11 @@ const UsersTable = ({ data, handleEdit, handleDelete }) => {
                             <div className='text'>{user.number}</div>
                         </td>
                         <td>
-                            <div className={`text label ${getLabel(user)}`}>{user.status}</div>
+                            <div className='label-container'>
+                                {user.status.map((status, index) => (
+                                    <div key={index} className={`text label ${getLabelClassName(status)}`}>{status}</div>
+                                ))}
+                            </div>
                         </td>
                         <td>
                             <div className='btn-container'>
@@ -147,7 +151,7 @@ const UsersTable = ({ data, handleEdit, handleDelete }) => {
                     </tr>
                 ))}
             </tbody>
-        </table>
+        </table >
     )
 };
 

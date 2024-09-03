@@ -163,7 +163,11 @@ const SearchUsers = async (req, res, next) => {
     const parsedLimit = parseInt(limit);
     const result = await userService.searchUsers(parsedPageIndex, parsedLimit, searchQuery, "user");
     if (status && result.users && result.users.length > 0) {
-      result.users = result.users.filter(user => user.status.toLowerCase() === status.toLowerCase());
+      result.users = result.users.filter(user => {
+        const lowerCaseArr = user.status.map(status => status.toLowerCase());
+        const lowerCaseStatus = status.toLowerCase();
+        return lowerCaseArr.includes(lowerCaseStatus);
+      });
     }
     res.status(200).json({ result });
   } catch (error) {

@@ -55,8 +55,14 @@
     color: #030229;
 }
 
+.users-table tbody .label-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
 .users-table tbody td .label {
-    padding: 5px 22px 5px 18px;
+    padding: 5px 18px 5px 15px;
     border-radius: 20px;
     display: inline-block;
 }

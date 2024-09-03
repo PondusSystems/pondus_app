@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import './TurnoverChart.css';
 import Chart from 'chart.js/auto';
 
-const TurnoverChart = () => {
+const TurnoverChart = ({ data }) => {
   const chartRef = useRef(null);
 
   useEffect(() => {
@@ -13,14 +13,21 @@ const TurnoverChart = () => {
     gradient.addColorStop(0, 'rgba(83, 253, 202, 0.3)'); // More color on the left
     gradient.addColorStop(1, 'rgba(83, 253, 202, 0.1)');   // Less color on the right
 
+    const labels = data.map(item => item.period);
+    const chartData = data.map(item => item.totalTurnover);
+    const minValue = Math.min(...chartData);
+    const maxValue = Math.max(...chartData);
+
+    const stepSize = Math.ceil((maxValue - minValue) / 5);
+
     const turnoverChart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        labels: labels,
         datasets: [
           {
             label: 'Turnover',
-            data: [40, 30, 50, 60, 70, 80, 90, 70, 60, 80, 90, 100], // Replace with your data
+            data: chartData, // Replace with your data
             borderColor: '#53FDCA',
             borderWidth: '3.5',
             backgroundColor: gradient, // Use the gradient as background color
@@ -53,7 +60,7 @@ const TurnoverChart = () => {
                   label += ': ';
                 }
                 if (context.parsed.y !== null) {
-                  label += `${context.parsed.y} K`;
+                  label += `${context.parsed.y}`;
                 }
                 return label;
               },
@@ -61,7 +68,7 @@ const TurnoverChart = () => {
           },
           title: { // Add the title configuration here
             display: true,
-            text: 'Turnover (K)',
+            text: 'Turnover',
             position: 'top',
             padding: {
               top: 10,
@@ -78,10 +85,10 @@ const TurnoverChart = () => {
             beginAtZero: true,
             title: {
               display: false,
-              text: 'Turnover (K)',
+              text: 'Turnover',
             },
             ticks: {
-              stepSize: 20,
+              stepSize: stepSize,
             },
             grid: {
               display: true, // Show horizontal grid lines
@@ -106,7 +113,7 @@ const TurnoverChart = () => {
     return () => {
       turnoverChart.destroy();
     };
-  }, []);
+  }, [data]);
 
   return (
     <div className='turnover-chart-container'>
