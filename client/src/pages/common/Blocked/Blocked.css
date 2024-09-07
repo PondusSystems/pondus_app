@@ -1,0 +1,32 @@
+.blocked-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.blocked-container .blocked-message {
+    padding: 30px;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #333;
+    font-size: 18px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.blocked-container .blocked-message h1 {
+    font-size: 28px;
+    color: #e74c3c;
+    margin-bottom: 20px;
+}
+
+.blocked-container .blocked-message p {
+    margin-bottom: 20px;
+}

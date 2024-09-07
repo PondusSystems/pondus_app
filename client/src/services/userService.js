@@ -37,7 +37,7 @@ const userService = {
     },
     refreshToken: async (payload) => {
         try {
-            const response = await axiosInstance.post(`${BASE_URL}/refresh-token`, payload, { withCredentials: true });
+            const response = await axiosInstance.post(`${BASE_URL}/refresh-token`, payload, { withCredentials: true, skipAuthRefresh: true });
             return response.data;
         } catch (error) {
             throw error;

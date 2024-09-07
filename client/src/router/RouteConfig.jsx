@@ -18,6 +18,7 @@ import Success from '../pages/user/Success/Success.jsx';
 import AuthenticatedRedirect from '../components/AuthenticatedRedirect/AuthenticatedRedirect.jsx';
 import Redirect from '../pages/common/Redirect/Redirect.jsx';
 import NotFound from '../pages/common/NotFound/NotFound.jsx';
+import Blocked from '../pages/common/Blocked/Blocked.jsx';
 
 const routes = [
   //staff
@@ -47,7 +48,8 @@ const routes = [
   { path: "/settings", element: <Settings />, protected: true, showSidebar: true },
   { path: "/", element: <Redirect />, protected: true, showSidebar: true },
 
-  //not found
+  //common
+  { path: "/blocked", element: <Blocked />, protected: false, showSidebar: false },
   { path: "*", element: <NotFound />, protected: false, showSidebar: false },
 ];
 

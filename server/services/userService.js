@@ -1,5 +1,5 @@
 const User = require('../models/userModel');
-const crypto = require('crypto');
+const CryptoJS = require('crypto-js')
 const authUtils = require('../utils/authUtils');
 const stripeService = require('./stripeService');
 const subscriptionService = require('./subscriptionService');
@@ -77,7 +77,8 @@ const createResetToken = async (email, requiredRoles) => {
     error.code = 404;
     throw error;
   }
-  const resetToken = crypto.randomBytes(32).toString('hex');
+  const randomBytes = CryptoJS.lib.WordArray.random(32);
+  const resetToken = randomBytes.toString(CryptoJS.enc.Hex);
   user.resetToken = resetToken;
   user.resetTokenExpiry = Date.now() + 3600000; // Token valid for 1 hour
   await user.save();
@@ -101,14 +102,14 @@ const resetPassword = async (token, newPassword) => {
 const refreshToken = async (refreshToken) => {
   if (!refreshToken) {
     const error = new Error('Refresh token not found!');
-    error.code = 403;
+    error.code = 401;
     throw error;
   }
   const payload = authUtils.verifyRefreshToken(refreshToken);
   const user = await User.findById(payload.id);
   if (!user || user.refreshToken !== refreshToken) {
     const error = new Error('Invalid refresh token!');
-    error.code = 403;
+    error.code = 401;
     throw error;
   }
   const newPayload = { id: payload.id, email: payload.email, role: payload.role };

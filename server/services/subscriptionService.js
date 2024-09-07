@@ -162,8 +162,6 @@ const getActiveMembers = async () => {
     return activeMembers;
 };
 
-// getActiveMembers();
-
 const getActiveMembersCount = async () => {
     const activeUsers = await getActiveMembers();
     // console.log("Active Members: ", activeUsers);
@@ -195,8 +193,6 @@ const getNewMembersCount = async () => {
     return newMembers.length;
 };
 
-// getNewMembersCount();
-
 const getLostMembersCount = async () => {
     const now = new Date();
 
@@ -223,85 +219,6 @@ const getLostMembersCount = async () => {
     // console.log("Lost Members: ", lostMembers.length);
     return lostMembers.length;
 };
-
-// getLostMembersCount();
-// labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "July", "Aug", "Sep", "Oct", "Nov", "Dec"]
-
-
-// const getTurnoverData = async (year, period) => {
-//     const startDate = new Date(year, 0, 1); // Start of the year
-//     const endDate = new Date(year + 1, 0, 1); // Start of next year
-
-//     // Define period mappings
-//     const periodMappings = {
-//         monthly: {
-//             groupBy: { $month: "$subscriptions.startDate" },
-//             labels: Array.from({ length: 12 }, (_, i) => i + 1)
-//         },
-//         quarterly: {
-//             groupBy: {
-//                 $switch: {
-//                     branches: [
-//                         { case: { $lte: [{ $month: "$subscriptions.startDate" }, 3] }, then: 1 },
-//                         { case: { $lte: [{ $month: "$subscriptions.startDate" }, 6] }, then: 2 },
-//                         { case: { $lte: [{ $month: "$subscriptions.startDate" }, 9] }, then: 3 },
-//                         { case: { $lte: [{ $month: "$subscriptions.startDate" }, 12] }, then: 4 }
-//                     ],
-//                     default: "Unknown"
-//                 }
-//             },
-//             labels: [1, 2, 3, 4]
-//         },
-//         halfYearly: {
-//             groupBy: {
-//                 $cond: [
-//                     { $lte: [{ $month: "$subscriptions.startDate" }, 6] }, 1, 2
-//                 ]
-//             },
-//             labels: [1, 2]
-//         },
-//         yearly: {
-//             groupBy: { $year: "$subscriptions.startDate" },
-//             labels: [year]
-//         }
-//     };
-
-//     // Get the period mapping
-//     const { groupBy, labels } = periodMappings[period] || {};
-
-//     if (!groupBy) {
-//         throw new Error('Invalid period type');
-//     }
-
-//     const turnoverData = await Subscription.aggregate([
-//         { $unwind: "$subscriptions" },
-//         { $match: { "subscriptions.startDate": { $gte: startDate }, "subscriptions.endDate": { $lt: endDate }, "subscriptions.status": "active" } },
-//         {
-//             $project: {
-//                 period: groupBy,
-//                 amount: "$subscriptions.planInfo.amount"
-//             }
-//         },
-//         {
-//             $group: {
-//                 _id: "$period",
-//                 totalTurnover: { $sum: "$amount" }
-//             }
-//         },
-//         {
-//             $sort: { "_id": 1 }
-//         }
-//     ]);
-
-//     // Ensure all labels are present in the data
-//     const result = labels.map(label => {
-//         const found = turnoverData.find(item => item._id === label);
-//         return { period: label, totalTurnover: found ? found.totalTurnover : 0 };
-//     });
-
-//     console.log(`${period.charAt(0).toUpperCase() + period.slice(1)} Turnover: `, result);
-//     return result;
-// };
 
 const getTurnoverData = async (year, period) => {
     const startDate = new Date(year, 0, 1); // Start of the year
@@ -335,11 +252,8 @@ const getTurnoverData = async (year, period) => {
             labels: ['H1', 'H2']
         },
         yearly: {
-            // groupBy: { $year: "$subscriptions.startDate" },
-            // labels: [year] 
             groupBy: { $year: "$subscriptions.startDate" },
             labels: Array.from({ length: 5 }, (_, i) => year - 4 + i)  // Last 5 years including the current year
-
         }
     };
 
@@ -382,14 +296,14 @@ const getTurnoverData = async (year, period) => {
     return result;
 };
 
-// getTurnoverData(2024, 'yearly');
+// getTurnoverData(2024, 'monthly');
 
 const getGrowthRateData = async (year, period) => {
     // const turnoverData = await getTurnoverData(year, period);
     const turnoverData = [
-        { period: 'Jan', totalTurnover: 100 },
+        { period: 'Jan', totalTurnover: 0 },
         { period: 'Feb', totalTurnover: 150 },
-        { period: 'Mar', totalTurnover: 180 },
+        { period: 'Mar', totalTurnover: 0 },
         { period: 'Apr', totalTurnover: 170 },
         { period: 'May', totalTurnover: 250 },
         { period: 'Jun', totalTurnover: 200 },
@@ -402,11 +316,33 @@ const getGrowthRateData = async (year, period) => {
     ];
 
     let growthRate = [];
+    let initialTurnover = 150;
+    // const searchedItem = turnoverData.find(item => item.totalTurnover > 0);
+    // if (searchedItem) {
+    //     initialTurnover = searchedItem.totalTurnover;
+    // }
     for (let i = 1; i < turnoverData.length; i++) {
-        const rate = ((turnoverData[i].totalTurnover - turnoverData[i - 1].totalTurnover) / turnoverData[i - 1].totalTurnover) * 100;
+        const currentTurnOver = turnoverData[i].totalTurnover;
+        const previousTurnOver = turnoverData[i - 1].totalTurnover;
+        let rate;
+        let relativeRate;
+        rate = ((currentTurnOver - previousTurnOver) / previousTurnOver) * 100;
+        relativeRate = ((currentTurnOver - initialTurnover) / initialTurnover) * 100;
+        // if (currentTurnOver === 0 && previousTurnOver === 0) {
+        //     rate = 0;
+        // } else {
+        //     rate = ((currentTurnOver - previousTurnOver) / previousTurnOver) * 100;
+        // }
+        // if (currentTurnOver === 0) {
+        //     relativeRate = 0;
+        // }
+        // else {
+        //     relativeRate = ((currentTurnOver - initialTurnover) / initialTurnover) * 100;
+        // }
         growthRate[i - 1] = {
             period: turnoverData[i].period,
-            growthRate: rate.toFixed(0)
+            growthRate: parseFloat(rate.toFixed(0)),
+            relativeGrowthRate: parseFloat(relativeRate.toFixed(0))
         }
     };
     console.log('Growth Rate: ', growthRate);

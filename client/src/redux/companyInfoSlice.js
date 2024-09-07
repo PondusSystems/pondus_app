@@ -10,6 +10,9 @@ const initialState = {
 export const fetchCompanyInfo = createAsyncThunk(
     'company/fetchCompanyInfo',
     async (_, { dispatch }) => {
+        if (window.location.pathname === '/blocked') {
+            return;
+        }
         dispatch(ShowLoading());
         try {
             const response = await companyInfoService.getCompanyInfo();

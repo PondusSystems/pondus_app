@@ -41,9 +41,14 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async (error) => {
+    console.log('Instance Error: ', error);
     const { config, response: { status } } = error;
     const originalRequest = config;
-    if (status === 401 && !originalRequest._retry && !originalRequest.skipAuthRefresh) {
+    if (error?.response?.data?.access === 'blocked') {
+      window.location.href = '/blocked';
+      return Promise.reject(err);
+    }
+    else if (status === 401 && !originalRequest._retry && !originalRequest.skipAuthRefresh) {
       originalRequest._retry = true;
 
       if (!isRefreshing) {
