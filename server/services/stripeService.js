@@ -1,7 +1,8 @@
-const stripe = require('../configs/stripe.config');
+const factoryUtils = require('../utils/factoryUtils');
 const commonService = require('./commonService');
 
-const fetchProductInfo = async (productId) => {
+const fetchProductInfo = async (stripeConfig, productId) => {
+    const stripe = factoryUtils.createStripeClient(stripeConfig);
     try {
         const product = await stripe.products.retrieve(productId);
         if (!product) {
@@ -51,7 +52,7 @@ const fetchProductInfo = async (productId) => {
         // console.log('Recurring: ', productInfo.prices[0].recurring);
         return productInfo;
     } catch (err) {
-        if (err.code) {
+        if (err.code && !isNaN(err.code)) {
             throw err;
         }
         else {
@@ -62,7 +63,8 @@ const fetchProductInfo = async (productId) => {
     }
 };
 
-const createCustomer = async (name, email) => {
+const createCustomer = async (stripeConfig, name, email) => {
+    const stripe = factoryUtils.createStripeClient(stripeConfig);
     const customer = await stripe.customers.create({ name, email });
     if (!customer) {
         const error = new Error('Unable to create customer!');
@@ -72,7 +74,8 @@ const createCustomer = async (name, email) => {
     return customer.id;
 };
 
-const updateCustomerEmail = async (stripeCustomerId, newEmail) => {
+const updateCustomerEmail = async (stripeConfig, stripeCustomerId, newEmail) => {
+    const stripe = factoryUtils.createStripeClient(stripeConfig);
     const customer = await stripe.customers.update(stripeCustomerId, {
         email: newEmail,
     });
@@ -83,7 +86,8 @@ const updateCustomerEmail = async (stripeCustomerId, newEmail) => {
     }
 };
 
-const createCheckoutSession = async (priceId, stripeCustomerId, CLIENT_URL) => {
+const createCheckoutSession = async (stripeConfig, priceId, stripeCustomerId, CLIENT_URL) => {
+    const stripe = factoryUtils.createStripeClient(stripeConfig);
     try {
         const session = await stripe.checkout.sessions.create(
             {
@@ -108,7 +112,8 @@ const createCheckoutSession = async (priceId, stripeCustomerId, CLIENT_URL) => {
     }
 };
 
-const constructEvent = async (sig, data) => {
+const constructEvent = async (stripeConfig, sig, data) => {
+    const stripe = factoryUtils.createStripeClient(stripeConfig);
     try {
         const event = stripe.webhooks.constructEvent(data, sig, process.env.STRIPE_WEBHOOKS_KEY);
         return event;
@@ -119,7 +124,8 @@ const constructEvent = async (sig, data) => {
     }
 };
 
-const handlePaymentSucceededEvent = async (event) => {
+const handlePaymentSucceededEvent = async (stripeConfig, event) => {
+    const stripe = factoryUtils.createStripeClient(stripeConfig);
     try {
         const invoice = event.data.object;
         // console.log('Invoice: ', invoice);
@@ -164,7 +170,8 @@ const handlePaymentSucceededEvent = async (event) => {
     }
 };
 
-const handleSubscriptionUpdatedEvent = async (event) => {
+const handleSubscriptionUpdatedEvent = async (stripeConfig, event) => {
+    const stripe = factoryUtils.createStripeClient(stripeConfig);
     try {
         const subscription = event.data.object;
         // console.log('Subscription: ', subscription);
@@ -200,7 +207,8 @@ const handleSubscriptionUpdatedEvent = async (event) => {
     }
 };
 
-const createBillingPortalSession = async (customerId, CLIENT_URL) => {
+const createBillingPortalSession = async (stripeConfig, customerId, CLIENT_URL) => {
+    const stripe = factoryUtils.createStripeClient(stripeConfig);
     if (!customerId) {
         const newError = new Error(`Customer not found!`);
         newError.code = 404;
@@ -214,7 +222,7 @@ const createBillingPortalSession = async (customerId, CLIENT_URL) => {
 
         return session.url;
     } catch (error) {
-        if (error.code) {
+        if (err.code && !isNaN(err.code)) {
             throw error;
         }
         else {
@@ -225,7 +233,8 @@ const createBillingPortalSession = async (customerId, CLIENT_URL) => {
     }
 };
 
-const fetchSubscription = async (subscriptionId) => {
+const fetchSubscription = async (stripeConfig, subscriptionId) => {
+    const stripe = factoryUtils.createStripeClient(stripeConfig);
     try {
         const subscription = await stripe.subscriptions.retrieve(subscriptionId);
         return subscription;
@@ -236,7 +245,8 @@ const fetchSubscription = async (subscriptionId) => {
     }
 };
 
-const updateSubscription = async (subscriptionId, subscriptionItemId, newPriceId) => {
+const updateSubscription = async (stripeConfig, subscriptionId, subscriptionItemId, newPriceId) => {
+    const stripe = factoryUtils.createStripeClient(stripeConfig);
     try {
         const updatedSubscription = await stripe.subscriptions.update(subscriptionId, {
             items: [

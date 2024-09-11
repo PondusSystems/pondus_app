@@ -7,13 +7,13 @@ const CreateCheckoutSession = async (req, res, next) => {
         const CLIENT_URL = req.get('origin');
         const { priceId } = req.body;
         const userId = req.user?.id;
-        let stripeCustomerId = await userService.fetchUserStripeCustomerId(userId);
+        let stripeCustomerId = await userService.fetchUserStripeCustomerId(req.dbConnectionId, userId);
         if (!stripeCustomerId) {
-            const user = await userService.fetchUser(userId);
-            stripeCustomerId = await stripeService.createCustomer(user.name, user.email);
-            await userService.updateUser(userId, { stripeCustomerId });
+            const user = await userService.fetchUser(req.dbConnectionId, userId);
+            stripeCustomerId = await stripeService.createCustomer(req.config.stripe, user.name, user.email);
+            await userService.updateUser(req.dbConnectionId, userId, { stripeCustomerId });
         }
-        const sessionURL = await stripeService.createCheckoutSession(priceId, stripeCustomerId, CLIENT_URL);
+        const sessionURL = await stripeService.createCheckoutSession(req.config.stripe, priceId, stripeCustomerId, CLIENT_URL);
         res.status(200).json({ url: sessionURL });
     } catch (error) {
         next(error);
@@ -51,8 +51,8 @@ const CreateBillingPortalSession = async (req, res, next) => {
     try {
         const CLIENT_URL = req.get('origin');
         const userId = req.user?.id;
-        const customerId = await userService.fetchUserStripeCustomerId(userId);
-        const sessionURL = await stripeService.createBillingPortalSession(customerId, CLIENT_URL);
+        const customerId = await userService.fetchUserStripeCustomerId(req.dbConnectionId, userId);
+        const sessionURL = await stripeService.createBillingPortalSession(req.config.stripe, customerId, CLIENT_URL);
         res.status(200).json({ url: sessionURL });
     } catch (error) {
         next(error);
@@ -63,13 +63,13 @@ const UpdateSubscription = async (req, res, next) => {
     try {
         const { newPriceId } = req.body;
         const userId = req.user?.id;
-        const { subscriptionId } = await subscriptionService.getUserSubscriptionInfo(userId);
+        const { subscriptionId } = await subscriptionService.getUserSubscriptionInfo(req.dbConnectionId, userId);
         if (!subscriptionId) {
             return res.status(400).json({ error: 'No active subscription found!' });
         }
-        const subscription = await stripeService.fetchSubscription(subscriptionId);
+        const subscription = await stripeService.fetchSubscription(req.config.stripe, subscriptionId);
         const subscriptionItemId = subscription.items.data[0].id;
-        await stripeService.updateSubscription(subscriptionId, subscriptionItemId, newPriceId);
+        await stripeService.updateSubscription(req.config.stripe, subscriptionId, subscriptionItemId, newPriceId);
         res.status(200).json({ message: 'Subscription updated successfully!' });
     } catch (error) {
         next(error);

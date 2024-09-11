@@ -1,10 +1,11 @@
-const User = require('../models/userModel');
+const { loadDBModel } = require('../utils/modelUtils');
 const CryptoJS = require('crypto-js')
 const authUtils = require('../utils/authUtils');
 const stripeService = require('./stripeService');
 const subscriptionService = require('./subscriptionService');
 
-const createUser = async (userData) => {
+const createUser = async (connectionId, userData) => {
+  const User = loadDBModel(connectionId, 'user');
   const { name, email, number, dateOfBirth, address, city, zip, password, role, notes } = userData;
   let existingUser = await User.findOne({ email });
   if (existingUser) {
@@ -34,7 +35,8 @@ const createUser = async (userData) => {
   return user;
 };
 
-const loginUser = async (loginData, userType) => {
+const loginUser = async (connectionId, loginData, userType) => {
+  const User = loadDBModel(connectionId, 'user');
   const { email, password } = loginData;
   const user = await User.findOne({ email });
   if (!user) {
@@ -65,7 +67,8 @@ const loginUser = async (loginData, userType) => {
   return { accessToken, refreshToken };
 };
 
-const createResetToken = async (email, requiredRoles) => {
+const createResetToken = async (connectionId, email, requiredRoles) => {
+  const User = loadDBModel(connectionId, 'user');
   const user = await User.findOne({ email });
   if (!user) {
     const error = new Error('User not found!');
@@ -85,7 +88,8 @@ const createResetToken = async (email, requiredRoles) => {
   return { user, resetToken };
 };
 
-const resetPassword = async (token, newPassword) => {
+const resetPassword = async (connectionId, token, newPassword) => {
+  const User = loadDBModel(connectionId, 'user');
   const user = await User.findOne({ resetToken: token, resetTokenExpiry: { $gt: Date.now() } });
   if (!user) {
     const error = new Error('Invalid or expired token!');
@@ -99,7 +103,8 @@ const resetPassword = async (token, newPassword) => {
   await user.save();
 };
 
-const refreshToken = async (refreshToken) => {
+const refreshToken = async (connectionId, refreshToken) => {
+  const User = loadDBModel(connectionId, 'user');
   if (!refreshToken) {
     const error = new Error('Refresh token not found!');
     error.code = 401;
@@ -120,7 +125,8 @@ const refreshToken = async (refreshToken) => {
   return { newAccessToken, newRefreshToken };
 };
 
-const logoutUser = async (refreshToken) => {
+const logoutUser = async (connectionId, refreshToken) => {
+  const User = loadDBModel(connectionId, 'user');
   const payload = authUtils.verifyRefreshToken(refreshToken);
   if (payload && payload.id) {
     const user = await User.findById(payload.id);
@@ -131,7 +137,8 @@ const logoutUser = async (refreshToken) => {
   }
 };
 
-const fetchUser = async (userId) => {
+const fetchUser = async (connectionId, userId) => {
+  const User = loadDBModel(connectionId, 'user');
   const userProjection = {
     name: 1,
     email: 1,
@@ -152,7 +159,8 @@ const fetchUser = async (userId) => {
   return user;
 };
 
-const searchUsers = async (pageIndex, limit, searchQuery, role) => {
+const searchUsers = async (connectionId, pageIndex, limit, searchQuery, role) => {
+  const User = loadDBModel(connectionId, 'user');
   const skip = (pageIndex - 1) * limit;
   let query = {};
   if (searchQuery && searchQuery !== '') {
@@ -196,7 +204,7 @@ const searchUsers = async (pageIndex, limit, searchQuery, role) => {
   if (role === 'user') {
     // Create an array of promises to fetch subscription info for each user
     const subscriptionPromises = users.map(async user => {
-      const subscriptionInfo = await subscriptionService.getUserSubscriptionStatus(user._id);
+      const subscriptionInfo = await subscriptionService.getUserSubscriptionStatus(connectionId, user._id);
       return { ...user.toObject(), ...subscriptionInfo };  // Merge user data with subscription info
     });
 
@@ -211,7 +219,8 @@ const searchUsers = async (pageIndex, limit, searchQuery, role) => {
   };
 };
 
-const updateUser = async (userId, updateData, role = null) => {
+const updateUser = async (connectionId, stripeConfig, userId, updateData, role = null) => {
+  const User = loadDBModel(connectionId, 'user');
   const userToUpdate = await User.findById(userId);
 
   if (!userToUpdate) {
@@ -251,12 +260,13 @@ const updateUser = async (userId, updateData, role = null) => {
   );
   if (updateData.email && updateData.email !== userToUpdate.email && updatedUser.stripeCustomerId) {
     console.log('Updating customer email...');
-    await stripeService.updateCustomerEmail(updatedUser.stripeCustomerId, data.email);
+    await stripeService.updateCustomerEmail(stripeConfig, updatedUser.stripeCustomerId, data.email);
   }
   return updatedUser;
 };
 
-const deleteUser = async (userId, role) => {
+const deleteUser = async (connectionId, userId, role) => {
+  const User = loadDBModel(connectionId, 'user');
   const userToDelete = await User.findById(userId);
 
   if (!userToDelete) {
@@ -273,7 +283,8 @@ const deleteUser = async (userId, role) => {
   return deletedUser;
 };
 
-const changeUserPassword = async (userId, oldPassword, newPassword) => {
+const changeUserPassword = async (connectionId, userId, oldPassword, newPassword) => {
+  const User = loadDBModel(connectionId, 'user');
   const user = await User.findById(userId);
   if (!user) {
     const error = new Error('User not found!');
@@ -291,7 +302,8 @@ const changeUserPassword = async (userId, oldPassword, newPassword) => {
   await user.save();
 };
 
-const fetchUserStripeCustomerId = async (userId) => {
+const fetchUserStripeCustomerId = async (connectionId, userId) => {
+  const User = loadDBModel(connectionId, 'user');
   const user = await User.findById(userId);
   if (!user) {
     const error = new Error('User not found!');

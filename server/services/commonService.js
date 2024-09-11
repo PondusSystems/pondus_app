@@ -1,7 +1,8 @@
-const User = require('../models/userModel');
+const { loadDBModel } = require('../utils/modelUtils');
 
-const fetchUserId = async (filter) => {
-    const user = await User.findOne(filter);
+const fetchUserId = async (connectionId, filter) => {
+    const User = loadDBModel(connectionId, 'user');
+    const user = await User.findOne(req.dbConnectionId, filter);
     if (!user) {
         const error = new Error('User not found!');
         error.code = 404;

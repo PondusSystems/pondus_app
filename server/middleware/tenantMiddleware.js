@@ -1,17 +1,20 @@
 const tenantUtils = require('../utils/tenantUtils');
+const connectDB = require('../configs/db.config');
 
 const tenantMiddleware = async (req, res, next) => {
-    const tenantId = req.headers['x-tenant-id'];
-
-    if (!tenantId) {
-        return res.status(400).json({ error: 'Tenant Id is required!', access: "blocked" });
-    }
-
     try {
-        const config = await tenantUtils.getTenantConfig(tenantId);
+        console.log('Endpoint: ', req.originalUrl || req.url)
+        const tenantId = req.headers['x-tenant-id'];
+        if (!tenantId) {
+            return res.status(400).json({ error: 'Tenant Id is required!', access: "blocked" });
+        }
 
-        // Attach tenant configuration to the request object
-        // req.tenantConfig = config;
+        const config = await tenantUtils.getTenantConfig(tenantId);
+        const DB = config.dbURI;
+        const connectionId = await connectDB(DB);
+        console.log('Current connection Id: ', connectionId);
+        req.dbConnectionId = connectionId;
+        req.config = config;
         next();
     } catch (error) {
         if (error.code && error.message) {

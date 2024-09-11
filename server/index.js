@@ -3,7 +3,6 @@ const path = require('path');
 const cookieParser = require("cookie-parser");
 const cors = require('cors');
 require('dotenv').config({ path: "./configs/.env" });
-const connectDB = require("./configs/db.config");
 const routes = require('./routes/index');
 const tenantMiddleware = require('./middleware/tenantMiddleware');
 const errorHandlerMiddleware = require('./middleware/errorHandlerMiddleware');
@@ -14,7 +13,7 @@ const port = process.env.PORT || 5123;
 const corsOptions = {
     origin: 'http://localhost:5174',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-tenant-id'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Tenant-ID'],
     credentials: true
 };
 
@@ -30,18 +29,13 @@ app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use('/static', express.static(path.join(__dirname, 'static')));
 
-// DB Connection
-const DB = process.env.DB_URI;
-connectDB(DB);
-
 //Server status endpoint
 app.get('/', (req, res) => {
     res.send('Server is Up!');
 });
 
 // Routes
-app.use(tenantMiddleware);
-app.use("/api", routes);
+app.use("/api", tenantMiddleware, routes);
 
 //Error Handler
 app.use(errorHandlerMiddleware);

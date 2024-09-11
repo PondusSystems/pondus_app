@@ -1,6 +1,7 @@
-const Product = require('../models/productModel');
+const { loadDBModel } = require('../utils/modelUtils');
 
-const fetchAllProducts = async () => {
+const fetchAllProducts = async (connectionId) => {
+    const Product = loadDBModel(connectionId, 'product');
     const product = await Product.findOne({});
     if (!product) {
         const error = new Error('Product collection not found!');
@@ -16,7 +17,8 @@ const fetchAllProducts = async () => {
     return products;
 };
 
-const addProduct = async (data) => {
+const addProduct = async (connectionId, data) => {
+    const Product = loadDBModel(connectionId, 'product');
     let product = await Product.findOne({});
     if (!product) {
         product = await Product.create({
@@ -35,7 +37,8 @@ const addProduct = async (data) => {
     await product.save();
 };
 
-const updateProduct = async (productId, data) => {
+const updateProduct = async (connectionId, productId, data) => {
+    const Product = loadDBModel(connectionId, 'product');
     const product = await Product.findOne({});
     if (!product) {
         const error = new Error('Product collection not found!');
@@ -55,7 +58,8 @@ const updateProduct = async (productId, data) => {
     await product.save();
 };
 
-const deleteProduct = async (productId) => {
+const deleteProduct = async (connectionId, productId) => {
+    const Product = loadDBModel(connectionId, 'product');
     const product = await Product.findOne({});
     if (!product) {
         const error = new Error('Product collection not found!');
@@ -75,16 +79,6 @@ const deleteProduct = async (productId) => {
     await product.save();
 };
 
-const test = async () => {
-    // await addProduct({ productId: "12345678901234" });
-    // const products = await fetchAllProducts()
-    // console.log('Products: ', products);
-    const productId = '66c465fbc265ac0506b00982';
-    // await updateProduct(productId, { productId: 'abcd' });
-    await deleteProduct(productId);
-}
-
-// test();
 
 module.exports = {
     fetchAllProducts,

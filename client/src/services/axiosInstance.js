@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { getTenantId } from '../utils/tenantUtils';
 import userService from './userService';
 
 const axiosInstance = axios.create({
@@ -17,6 +18,8 @@ axiosInstance.interceptors.request.use(
         config.headers.Authorization = `Bearer ${token}`;
       }
     }
+    const tenantId = getTenantId();
+    config.headers['X-Tenant-ID'] = tenantId;
     return config;
   },
   (error) => {
@@ -41,7 +44,6 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async (error) => {
-    console.log('Instance Error: ', error);
     const { config, response: { status } } = error;
     const originalRequest = config;
     if (error?.response?.data?.access === 'blocked') {

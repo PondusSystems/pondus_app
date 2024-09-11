@@ -35,6 +35,6 @@ const companyInfoSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-const CompanyInfo = mongoose.model("company-info", companyInfoSchema);
+// const CompanyInfo = mongoose.model("company-info", companyInfoSchema);
 
-module.exports = CompanyInfo;
+module.exports = companyInfoSchema;

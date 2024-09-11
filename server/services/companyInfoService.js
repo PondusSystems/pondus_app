@@ -1,6 +1,7 @@
-const CompanyInfo = require('../models/companyInfoModel');
+const { loadDBModel } = require('../utils/modelUtils');
 
-const fetchCompanyInfo = async () => {
+const fetchCompanyInfo = async (connectionId) => {
+    const CompanyInfo = loadDBModel(connectionId, 'company-info');
     const companyInfoProjection = {
         name: 1,
         address: 1,
@@ -19,7 +20,8 @@ const fetchCompanyInfo = async () => {
     return companyInfo;
 };
 
-const updateCompanyInfo = async (updateData) => {
+const updateCompanyInfo = async (connectionId, updateData) => {
+    const CompanyInfo = loadDBModel(connectionId, 'company-info');
     const updatedInfo = await CompanyInfo.findOneAndUpdate({}, updateData, { new: true });
     if (!updatedInfo) {
         const error = new Error('Company Info not found!');
@@ -28,13 +30,6 @@ const updateCompanyInfo = async (updateData) => {
     }
     return updatedInfo;
 };
-
-const test = async () => {
-    const info = await fetchCompanyInfo();
-    console.log('Info: ', info);
-}
-
-// test()
 
 module.exports = {
     fetchCompanyInfo,

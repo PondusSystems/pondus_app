@@ -1,7 +1,7 @@
-const transporter = require('../configs/nodemailer.config');
-const userService = require('./userService');
+const factoryUtils = require('../utils/factoryUtils');
 
-const sendEmail = async (to, subject, text, html) => {
+const sendEmail = async (nodemailerConfig, to, subject, text, html) => {
+    const transporter = factoryUtils.createTransporter(nodemailerConfig);
     try {
         const mailOptions = {
             from: process.env.SENDER_EMAIL,
@@ -15,6 +15,9 @@ const sendEmail = async (to, subject, text, html) => {
         console.log('Email sent: ', info.messageId);
     } catch (error) {
         console.error('Error sending email: ', error);
+        const newError = new Error('Unable to send email!');
+        newError.code = 500;
+        throw newError;
     }
 };
 
