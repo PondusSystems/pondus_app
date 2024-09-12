@@ -11,14 +11,14 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(
-  (config) => {
+  async (config) => {
     if (!config.skipAuthRefresh) {
       const token = Cookies.get('pondus-jwt-token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
     }
-    const tenantId = getTenantId();
+    const tenantId = await getTenantId();
     config.headers['X-Tenant-ID'] = tenantId;
     return config;
   },
@@ -47,7 +47,7 @@ axiosInstance.interceptors.response.use(
     const { config, response: { status } } = error;
     const originalRequest = config;
     if (error?.response?.data?.access === 'blocked') {
-      window.location.href = '/blocked';
+      // window.location.href = '/blocked';
       return Promise.reject(err);
     }
     else if (status === 401 && !originalRequest._retry && !originalRequest.skipAuthRefresh) {

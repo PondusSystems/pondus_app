@@ -1,9 +1,21 @@
-import tenantConfig from "../constants/tenantConfig";
+import Cookies from 'js-cookie';
+import axios from 'axios';
 
-const getTenantId = () => {
+const getTenantId = async () => {
     const currentHost = window.location.hostname;
-    const tenantId = tenantConfig[currentHost] || '';
-    // const tenantId = window.prompt('Please enter tenant id:');
+    let tenantId = Cookies.get('tenant-id');
+    if (!tenantId) {
+        console.log('Fetching Tenant Id from admin server...');
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_ADMIN_BASE_URL}/api/tenant/get-tenant-id-by-host/${currentHost}`);
+            if (response.data?.tenantId) {
+                Cookies.set('tenant-id', response.data.tenantId);
+                tenantId = response.data.tenantId;
+            }
+        } catch (error) {
+            console.log('Unable to fetch tenant id from admin server');
+        }
+    }
     console.log('Current Tenant Id: ', tenantId);
     return tenantId;
 };

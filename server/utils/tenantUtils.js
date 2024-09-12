@@ -21,7 +21,6 @@ const getTenantConfig = async (tenantId) => {
             return JSON.parse(decryptedConfig);
         }
     } catch (error) {
-        console.log('Error: ' + error);
         const newError = new Error(error.response.data?.error || 'Error while retrieving tenant configuration!');
         newError.code = error.response.status || 500;
         throw newError;
