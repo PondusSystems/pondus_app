@@ -126,7 +126,7 @@ const UpdateUserInfo = async (req, res, next) => {
   try {
     const userId = req.user?.id;
     const data = req.body;
-    const user = await userService.updateUser(req.dbConnectionId, userId, data);
+    const user = await userService.updateUser(req.dbConnectionId, req.config.stripe, userId, data);
     res.status(200).json({ message: "Info updated successfully!" });
   } catch (error) {
     next(error);
@@ -201,7 +201,7 @@ const UpdateEmployee = async (req, res, next) => {
   try {
     const { userId } = req.params;
     const data = { ...req.body };
-    await userService.updateUser(req.dbConnectionId, userId, data, "employee");
+    await userService.updateUser(req.dbConnectionId, req.config.stripe, userId, data, "employee");
     res.status(200).json({ message: 'Employee info updated successfully!' });
   } catch (error) {
     next(error);

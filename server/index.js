@@ -19,7 +19,7 @@ const corsOptions = {
 
 //Express Middlewares
 app.use((req, res, next) => {
-    if (req.originalUrl === '/api/stripe/webhooks') {
+    if (req.originalUrl.startsWith('/api/stripe/webhooks')) {
         express.raw({ type: 'application/json' })(req, res, next);
     } else {
         express.json()(req, res, next);

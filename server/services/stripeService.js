@@ -115,7 +115,7 @@ const createCheckoutSession = async (stripeConfig, priceId, stripeCustomerId, CL
 const constructEvent = async (stripeConfig, sig, data) => {
     const stripe = factoryUtils.createStripeClient(stripeConfig);
     try {
-        const event = stripe.webhooks.constructEvent(data, sig, process.env.STRIPE_WEBHOOKS_KEY);
+        const event = stripe.webhooks.constructEvent(data, sig, stripeConfig.webhookKey);
         return event;
     } catch (err) {
         const newError = new Error(`Unable to construct event!`);
@@ -124,14 +124,14 @@ const constructEvent = async (stripeConfig, sig, data) => {
     }
 };
 
-const handlePaymentSucceededEvent = async (stripeConfig, event) => {
+const handlePaymentSucceededEvent = async (connectionId, stripeConfig, event) => {
     const stripe = factoryUtils.createStripeClient(stripeConfig);
     try {
         const invoice = event.data.object;
         // console.log('Invoice: ', invoice);
         const customerId = invoice.customer;
 
-        const userId = await commonService.fetchUserId({ stripeCustomerId: customerId });
+        const userId = await commonService.fetchUserId(connectionId, { stripeCustomerId: customerId });
         const chargeId = invoice.charge;
         const billingReason = invoice.billing_reason;
         // subscription_create
@@ -164,20 +164,21 @@ const handlePaymentSucceededEvent = async (stripeConfig, event) => {
         };
         return data;
     } catch (error) {
+        console.log("Success Event Error: ", error);
         const newError = new Error(`Unable to fetch info from event!`);
         newError.code = 400;
         throw newError;
     }
 };
 
-const handleSubscriptionUpdatedEvent = async (stripeConfig, event) => {
+const handleSubscriptionUpdatedEvent = async (connectionId, stripeConfig, event) => {
     const stripe = factoryUtils.createStripeClient(stripeConfig);
     try {
         const subscription = event.data.object;
         // console.log('Subscription: ', subscription);
         const customerId = subscription.customer;
 
-        const userId = await commonService.fetchUserId({ stripeCustomerId: customerId });
+        const userId = await commonService.fetchUserId(connectionId, { stripeCustomerId: customerId });
         const subscriptionId = subscription.id;
         const price = subscription.items.data[0].price;
         const productId = price.product;

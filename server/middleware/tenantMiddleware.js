@@ -3,8 +3,16 @@ const connectDB = require('../configs/db.config');
 
 const tenantMiddleware = async (req, res, next) => {
     try {
-        console.log('Endpoint: ', req.originalUrl || req.url)
-        const tenantId = req.headers['x-tenant-id'];
+        const urlPath = req.originalUrl || req.url;
+        console.log('Endpoint: ', urlPath)
+        let tenantId;
+        const webhookPathMatch = urlPath.match(/\/api\/stripe\/webhooks\/([^\/]+)/);
+        if (webhookPathMatch) {
+            tenantId = webhookPathMatch[1];
+        }
+        else {
+            tenantId = req.headers['x-tenant-id'];
+        }
         if (!tenantId) {
             return res.status(400).json({ error: 'Tenant Id is required!', access: "blocked" });
         }
@@ -21,7 +29,7 @@ const tenantMiddleware = async (req, res, next) => {
             return res.status(error.code).json({ error: error.message, access: "blocked" });
         }
         else {
-            return res.status(500).json({ error: 'Internal Server Error!', access: "blocked" });
+            return res.status(500).json({ error: 'Internal Server Error!' });
         }
     }
 };

@@ -13,7 +13,7 @@ router.post(
 );
 
 router.post(
-    "/webhooks",
+    "/webhooks/:tenantId",
     controller.StripeHooks
 );
 
