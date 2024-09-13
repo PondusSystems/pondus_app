@@ -52,7 +52,7 @@ const Dashboard = () => {
                     <TurnoverGraph data={data.turnover} />
                     <div className='bottom-div'>
                         <CLVSpeedometer />
-                        <GrowthRateChart />
+                        <GrowthRateChart data={data.growthRate} selectedView={selectedView} />
                     </div>
                     <div className='counter-card-container'>
                         <CounterCard value={data.activeMembersCount} description="Active members (on average)" query='active' />

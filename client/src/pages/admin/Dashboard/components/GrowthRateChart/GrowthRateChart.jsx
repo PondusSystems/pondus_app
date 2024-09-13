@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import './GrowthRateChart.css';
 import Chart from 'chart.js/auto';
 
-const GrowthRateChart = () => {
+const GrowthRateChart = ({ data, selectedView }) => {
     const chartRef = useRef(null);
 
     useEffect(() => {
@@ -12,16 +12,23 @@ const GrowthRateChart = () => {
         const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height); // Adjust gradient based on canvas width
         gradient.addColorStop(0, 'rgba(83, 253, 202, 1)'); // More color on the left
         gradient.addColorStop(1, 'rgba(83, 253, 202, 0.1)'); // More color on the left
-        // gradient.addColorStop(1, 'rgba(255, 255, 255, 1)');   // Less color on the right    
+
+        const labels = data.map(item => item.period);
+        const chartData = data.map(item => item.relativeGrowthRate);
+        const minValue = Math.min(...chartData);
+        const maxValue = Math.max(...chartData);
+
+        const stepSize = Math.ceil((maxValue - minValue) / 5);
+
 
         const growthRateChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                labels: labels,
                 datasets: [
                     {
                         label: 'Growth Rate',
-                        data: [20, 30, 35, 30, 40, 50, 60, 53, 57, 60, 65, 72], // Replace with your data
+                        data: chartData,
                         borderColor: '#53FDCA',
                         borderWidth: '3.5',
                         backgroundColor: gradient, // Use the gradient as background color
@@ -87,13 +94,34 @@ const GrowthRateChart = () => {
         return () => {
             growthRateChart.destroy();
         };
-    }, []);
+    }, [data]);
+
+    const getCurrentRate = () => {
+        const currentMonth = new Date().getMonth();
+        let dataIndex;
+        if (selectedView === 'monthly') {
+            dataIndex = currentMonth - 1;
+        }
+        else if (selectedView === 'quarterly') {
+            dataIndex = Math.floor((currentMonth) / 3) - 1;
+        }
+        else if (selectedView === 'halfYearly') {
+            dataIndex = Math.floor((currentMonth) / 6) - 1;
+        }
+        else {
+            dataIndex = data.length - 1;
+        }
+        if (dataIndex < 0) {
+            return 'N/A';
+        }
+        return isNaN(parseInt(data[dataIndex].growthRate)) ? 'N/A' : data[dataIndex].growthRate + '%';
+    }
 
     return (
         <div className='growth-rate-chart'>
             <div className='chart-header'>
                 <div className='chart-title'>Growth Rate</div>
-                <div className='chart-percentage'>33%</div>
+                <div className='chart-percentage'>{getCurrentRate()}</div>
             </div>
             <div className='growth-rate-chart-container'>
                 <canvas ref={chartRef}></canvas>

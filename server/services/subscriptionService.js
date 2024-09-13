@@ -306,56 +306,65 @@ const getTurnoverData = async (connectionId, year, period) => {
 
 // getTurnoverData(2024, 'monthly');
 
-const getGrowthRateData = async (connectionId, year, period) => {
+const getGrowthRateData = async (turnoverData) => {
     // const Subscription = loadDBModel(connectionId, 'subscription');
 
-    // const turnoverData = await getTurnoverData(year, period);
-    const turnoverData = [
-        { period: 'Jan', totalTurnover: 0 },
-        { period: 'Feb', totalTurnover: 150 },
-        { period: 'Mar', totalTurnover: 0 },
-        { period: 'Apr', totalTurnover: 170 },
-        { period: 'May', totalTurnover: 250 },
-        { period: 'Jun', totalTurnover: 200 },
-        { period: 'Jul', totalTurnover: 250 },
-        { period: 'Aug', totalTurnover: 300 },
-        { period: 'Sep', totalTurnover: 400 },
-        { period: 'Oct', totalTurnover: 550 },
-        { period: 'Nov', totalTurnover: 490 },
-        { period: 'Dec', totalTurnover: 600 }
-    ];
+    // const turnoverData = await getTurnoverData();
+    // console.log('TurnOver Data: ', turnoverData);
+    // const turnoverData = [
+    //     { period: 'Jan', totalTurnover: 0 },
+    //     { period: 'Feb', totalTurnover: 150 },
+    //     { period: 'Mar', totalTurnover: 0 },
+    //     { period: 'Apr', totalTurnover: 170 },
+    //     { period: 'May', totalTurnover: 250 },
+    //     { period: 'Jun', totalTurnover: 200 },
+    //     { period: 'Jul', totalTurnover: 250 },
+    //     { period: 'Aug', totalTurnover: 300 },
+    //     { period: 'Sep', totalTurnover: 400 },
+    //     { period: 'Oct', totalTurnover: 550 },
+    //     { period: 'Nov', totalTurnover: 490 },
+    //     { period: 'Dec', totalTurnover: 600 }
+    // ];
 
     let growthRate = [];
-    let initialTurnover = 150;
-    // const searchedItem = turnoverData.find(item => item.totalTurnover > 0);
-    // if (searchedItem) {
-    //     initialTurnover = searchedItem.totalTurnover;
-    // }
+    let initialTurnover = 0;
+    const searchedIndex = turnoverData.findIndex(item => item.totalTurnover > 0);
+    const searchedItem = turnoverData[searchedIndex];
+    if (searchedItem) {
+        initialTurnover = searchedItem.totalTurnover;
+    }
     for (let i = 1; i < turnoverData.length; i++) {
         const currentTurnOver = turnoverData[i].totalTurnover;
         const previousTurnOver = turnoverData[i - 1].totalTurnover;
         let rate;
         let relativeRate;
-        rate = ((currentTurnOver - previousTurnOver) / previousTurnOver) * 100;
-        relativeRate = ((currentTurnOver - initialTurnover) / initialTurnover) * 100;
-        // if (currentTurnOver === 0 && previousTurnOver === 0) {
-        //     rate = 0;
-        // } else {
-        //     rate = ((currentTurnOver - previousTurnOver) / previousTurnOver) * 100;
-        // }
-        // if (currentTurnOver === 0) {
-        //     relativeRate = 0;
-        // }
-        // else {
-        //     relativeRate = ((currentTurnOver - initialTurnover) / initialTurnover) * 100;
-        // }
+        // rate = ((currentTurnOver - previousTurnOver) / previousTurnOver) * 100;
+        // relativeRate = ((currentTurnOver - initialTurnover) / initialTurnover) * 100;
+        if (currentTurnOver === 0 && previousTurnOver === 0) {
+            rate = 0;
+        } else {
+            rate = ((currentTurnOver - previousTurnOver) / previousTurnOver) * 100;
+        }
+        if (initialTurnover === 0) {
+            relativeRate = 0;
+        }
+        else if (currentTurnOver === 0) {
+            relativeRate = 0;
+        }
+        else {
+            relativeRate = ((currentTurnOver - initialTurnover) / initialTurnover) * 100;
+            if (i >= searchedIndex) {
+                relativeRate += 100;
+            }
+        }
         growthRate[i - 1] = {
             period: turnoverData[i].period,
             growthRate: parseFloat(rate.toFixed(0)),
             relativeGrowthRate: parseFloat(relativeRate.toFixed(0))
         }
     };
-    console.log('Growth Rate: ', growthRate);
+    // console.log('Growth Rate: ', growthRate);
+    return growthRate;
 };
 
 // getGrowthRateData();
@@ -368,5 +377,6 @@ module.exports = {
     getTurnoverData,
     getActiveMembersCount,
     getNewMembersCount,
-    getLostMembersCount
+    getLostMembersCount,
+    getGrowthRateData,
 }
