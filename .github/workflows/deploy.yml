@@ -1,4 +1,4 @@
-name: Deploy
+name: CI/CD Pipeline
 
 on:
   push:
@@ -9,7 +9,28 @@ on:
       - main
 
 jobs:
+  test:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run tests
+        run: |
+          # Placeholder for running tests
+          echo "Running tests..."
+          # You can add your actual test command here, for example:
+          # npm test
+
+
   deploy:
+    if: github.event_name == 'push'
     runs-on: self-hosted
 
     strategy:
