@@ -34,20 +34,28 @@ jobs:
         if: ${{ matrix.app == 'client' }}
         id: client_changes
         run: |
-          if git diff --name-only origin/main HEAD -- subdir/client | grep .; then
+          git diff --name-only origin/main HEAD -- subdir/client > changes.txt
+          if [ -s changes.txt ]; then
             echo "changes_detected=true" >> $GITHUB_ENV
+            echo "Detected client changes:"
+            cat changes.txt
           else
             echo "changes_detected=false" >> $GITHUB_ENV
+            echo "No client changes detected."
           fi
 
       - name: Check for server changes
         if: ${{ matrix.app == 'server' }}
         id: server_changes
         run: |
-          if git diff --name-only origin/main HEAD -- subdir/server | grep .; then
+          git diff --name-only origin/main HEAD -- subdir/server > changes.txt
+          if [ -s changes.txt ]; then
             echo "changes_detected=true" >> $GITHUB_ENV
+            echo "Detected server changes:"
+            cat changes.txt
           else
             echo "changes_detected=false" >> $GITHUB_ENV
+            echo "No server changes detected."
           fi
 
       - name: Merge changes
@@ -64,16 +72,21 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-${{ matrix.app }}-${{ matrix.node-version }}-
 
-      - name: Install dependencies
-        if: env.changes_detected == 'true'
+      - name: Install client dependencies
+        if: ${{ matrix.app == 'client' && steps.client_changes.outputs.changes_detected == 'true' }}
         run: npm ci
-        working-directory: /var/www/pondus_app/${{ matrix.app }}
+        working-directory: /var/www/pondus_app/client
 
       - name: Build client
-        if: ${{ matrix.app == 'client' && env.changes_detected == 'true' }}
+        if: ${{ matrix.app == 'client' && steps.client_changes.outputs.changes_detected == 'true' }}
         run: npm run build
         working-directory: /var/www/pondus_app/client
 
+      - name: Install server dependencies
+        if: ${{ matrix.app == 'server' && steps.server_changes.outputs.changes_detected == 'true' }}
+        run: npm ci
+        working-directory: /var/www/pondus_app/server
+
       - name: Restart server
-        if: ${{ matrix.app == 'server' && env.changes_detected == 'true' }}
+        if: ${{ matrix.app == 'server' && steps.server_changes.outputs.changes_detected == 'true' }}
         run: pm2 restart "Pondus Server"
