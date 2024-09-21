@@ -53,7 +53,7 @@ jobs:
       - name: Check for client changes
         id: client_changes
         run: |
-          git diff --name-only origin/main -- client > changes.txt
+          git diff --name-only HEAD^..HEAD -- client > changes.txt
           if [ -s changes.txt ]; then
             echo "client_changes_detected=true" >> $GITHUB_ENV
             echo "Detected client changes:"
@@ -66,7 +66,7 @@ jobs:
       - name: Check for server changes
         id: server_changes
         run: |
-          git diff --name-only origin/main -- server > changes.txt
+          git diff --name-only HEAD^..HEAD -- server > changes.txt
           if [ -s changes.txt ]; then
             echo "server_changes_detected=true" >> $GITHUB_ENV
             echo "Detected server changes:"
