@@ -5,6 +5,7 @@ const ProductRoutes = require('./productRoutes');
 const StripeRoutes = require('./stripeRoutes');
 const SubscriptionRoutes = require('./subscriptionRoutes');
 
+
 const router = express.Router();
 
 // Set up routes
