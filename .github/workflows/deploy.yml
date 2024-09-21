@@ -26,8 +26,24 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Pull changes
-        run: git pull origin main
+      - name: Fetch changes
+        run: git fetch origin main
+        working-directory: /var/www/pondus_app
+
+      - name: Check for client changes
+        if: ${{ matrix.app == 'client' }}
+        id: client_changes
+        run: |
+          git diff --name-only origin/main HEAD -- subdir/client | grep . || echo "no_changes" > client_changes.txt
+
+      - name: Check for server changes
+        if: ${{ matrix.app == 'server' }}
+        id: server_changes
+        run: |
+          git diff --name-only origin/main HEAD -- subdir/server | grep . || echo "no_changes" > server_changes.txt
+
+      - name: Merge changes
+        run: git merge origin/main
         working-directory: /var/www/pondus_app
 
       - name: Cache dependencies
@@ -41,25 +57,14 @@ jobs:
             ${{ runner.os }}-node-${{ matrix.app }}-${{ matrix.node-version }}-
 
       - name: Install dependencies
+        if: ${{ (matrix.app == 'client' && steps.client_changes.outputs.no_changes != 'no_changes') || (matrix.app == 'server' && steps.server_changes.outputs.no_changes != 'no_changes') }}
         run: npm ci
         working-directory: /var/www/pondus_app/${{ matrix.app }}
-
-      - name: Check for client changes
-        if: ${{ matrix.app == 'client' }}
-        id: client_changes
-        run: |
-          git diff --name-only HEAD^ HEAD -- subdir/client | grep . || echo "no_changes"
 
       - name: Build client
         if: ${{ matrix.app == 'client' && steps.client_changes.outputs.no_changes != 'no_changes' }}
         run: npm run build
         working-directory: /var/www/pondus_app/client
-
-      - name: Check for server changes
-        if: ${{ matrix.app == 'server' }}
-        id: server_changes
-        run: |
-          git diff --name-only HEAD^ HEAD -- subdir/server | grep . || echo "no_changes"
 
       - name: Restart server
         if: ${{ matrix.app == 'server' && steps.server_changes.outputs.no_changes != 'no_changes' }}
