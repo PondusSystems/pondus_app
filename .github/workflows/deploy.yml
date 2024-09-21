@@ -14,7 +14,6 @@ jobs:
 
     strategy:
       matrix:
-        app: [client, server]
         node-version: [20]
 
     steps:
@@ -31,30 +30,28 @@ jobs:
         working-directory: /var/www/pondus_app
 
       - name: Check for client changes
-        if: ${{ matrix.app == 'client' }}
         id: client_changes
         run: |
-          git diff --name-only origin/main HEAD -- subdir/client > changes.txt
+          git diff --name-only origin/main -- client > changes.txt
           if [ -s changes.txt ]; then
-            echo "changes_detected=true" >> $GITHUB_ENV
+            echo "client_changes_detected=true" >> $GITHUB_ENV
             echo "Detected client changes:"
             cat changes.txt
           else
-            echo "changes_detected=false" >> $GITHUB_ENV
+            echo "client_changes_detected=false" >> $GITHUB_ENV
             echo "No client changes detected."
           fi
 
       - name: Check for server changes
-        if: ${{ matrix.app == 'server' }}
         id: server_changes
         run: |
-          git diff --name-only origin/main HEAD -- subdir/server > changes.txt
+          git diff --name-only origin/main -- server > changes.txt
           if [ -s changes.txt ]; then
-            echo "changes_detected=true" >> $GITHUB_ENV
+            echo "server_changes_detected=true" >> $GITHUB_ENV
             echo "Detected server changes:"
             cat changes.txt
           else
-            echo "changes_detected=false" >> $GITHUB_ENV
+            echo "server_changes_detected=false" >> $GITHUB_ENV
             echo "No server changes detected."
           fi
 
@@ -62,31 +59,43 @@ jobs:
         run: git merge origin/main
         working-directory: /var/www/pondus_app
 
-      - name: Cache dependencies
+      - name: Cache client dependencies
+        if: ${{ env.client_changes_detected == 'true' }}
         uses: actions/cache@v4
         with:
           path: |
-            /var/www/pondus_app/${{ matrix.app }}/node_modules
+            /var/www/pondus_app/client/node_modules
             /root/.npm
-          key: ${{ runner.os }}-node-${{ matrix.app }}-${{ matrix.node-version }}-${{ hashFiles('subdir/${{ matrix.app }}/package-lock.json') }}
+          key: ${{ runner.os }}-node-client-${{ hashFiles('client/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-${{ matrix.app }}-${{ matrix.node-version }}-
+            ${{ runner.os }}-node-client-
 
       - name: Install client dependencies
-        if: ${{ matrix.app == 'client' && steps.client_changes.outputs.changes_detected == 'true' }}
+        if: ${{ env.client_changes_detected == 'true' }}
         run: npm ci
         working-directory: /var/www/pondus_app/client
 
       - name: Build client
-        if: ${{ matrix.app == 'client' && steps.client_changes.outputs.changes_detected == 'true' }}
+        if: ${{ env.client_changes_detected == 'true' }}
         run: npm run build
         working-directory: /var/www/pondus_app/client
 
+      - name: Cache server dependencies
+        if: ${{ env.server_changes_detected == 'true' }}
+        uses: actions/cache@v4
+        with:
+          path: |
+            /var/www/pondus_app/server/node_modules
+            /root/.npm
+          key: ${{ runner.os }}-node-server-${{ hashFiles('server/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-server-
+
       - name: Install server dependencies
-        if: ${{ matrix.app == 'server' && steps.server_changes.outputs.changes_detected == 'true' }}
+        if: ${{ env.server_changes_detected == 'true' }}
         run: npm ci
         working-directory: /var/www/pondus_app/server
 
       - name: Restart server
-        if: ${{ matrix.app == 'server' && steps.server_changes.outputs.changes_detected == 'true' }}
+        if: ${{ env.server_changes_detected == 'true' }}
         run: pm2 restart "Pondus Server"
