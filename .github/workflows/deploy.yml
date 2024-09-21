@@ -28,7 +28,6 @@ jobs:
           # You can add your actual test command here, for example:
           # npm test
 
-
   deploy:
     if: github.event_name == 'push'
     runs-on: self-hosted
@@ -50,10 +49,14 @@ jobs:
         run: git fetch origin main
         working-directory: /var/www/pondus_app
 
+      - name: Get the last commit before the merge
+        id: last_commit
+        run: echo "LAST_COMMIT=$(git rev-parse HEAD^)" >> $GITHUB_ENV
+
       - name: Check for client changes
         id: client_changes
         run: |
-          git diff --name-only HEAD^..HEAD -- client > changes.txt
+          git diff --name-only ${{ env.LAST_COMMIT }}..HEAD -- client > changes.txt
           if [ -s changes.txt ]; then
             echo "client_changes_detected=true" >> $GITHUB_ENV
             echo "Detected client changes:"
@@ -66,7 +69,7 @@ jobs:
       - name: Check for server changes
         id: server_changes
         run: |
-          git diff --name-only HEAD^..HEAD -- server > changes.txt
+          git diff --name-only ${{ env.LAST_COMMIT }}..HEAD -- server > changes.txt
           if [ -s changes.txt ]; then
             echo "server_changes_detected=true" >> $GITHUB_ENV
             echo "Detected server changes:"
