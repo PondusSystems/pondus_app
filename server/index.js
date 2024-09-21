@@ -11,7 +11,7 @@ const errorHandlerMiddleware = require('./middleware/errorHandlerMiddleware');
 const app = express();
 const port = process.env.PORT || 5123;
 const corsOptions = {
-    origin: 'http://localhost:5174',
+    origin: ['https://app.pondus.io', 'https://www.app.pondus.io'],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Tenant-ID'],
     credentials: true
