@@ -43,6 +43,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Pull latest code
+        run: git pull origin main
+        working-directory: /var/www/pondus_app
+  
       - name: Cache client dependencies
         uses: actions/cache@v4
         with:
