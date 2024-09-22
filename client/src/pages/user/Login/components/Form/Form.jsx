@@ -153,7 +153,7 @@ const Form = () => {
                         />
                         <label htmlFor='rememberMe'>Remember Me</label>
                     </div>
-                    <Link to='/forget-password' className='nav-link'>Forgot your password?</Link>
+                    <Link to='/forgot-password' className='nav-link'>Forgot your password?</Link>
                 </div>
                 <button className='btn' onClick={handleSubmit}>Log In</button>
             </div>
