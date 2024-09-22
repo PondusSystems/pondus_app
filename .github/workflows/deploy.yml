@@ -23,10 +23,8 @@ jobs:
 
       - name: Run tests
         run: |
-          # Placeholder for running tests
           echo "Running tests..."
-          # You can add your actual test command here, for example:
-          # npm test
+          # Add your actual test command here, e.g., npm test
 
   deploy:
     if: github.event_name == 'push'
@@ -45,13 +43,15 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Fetch changes
+      - name: Fetch main branch
         run: git fetch origin main
         working-directory: /var/www/pondus_app
 
-      - name: Get the last commit before the merge
+      - name: Get last commit on main
         id: last_commit
-        run: echo "LAST_COMMIT=$(git rev-parse HEAD^)" >> $GITHUB_ENV
+        run: |
+          LAST_COMMIT=$(git rev-parse origin/main)
+          echo "LAST_COMMIT=${LAST_COMMIT}" >> $GITHUB_ENV
 
       - name: Check for client changes
         id: client_changes
