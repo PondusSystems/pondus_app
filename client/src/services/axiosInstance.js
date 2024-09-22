@@ -47,7 +47,7 @@ axiosInstance.interceptors.response.use(
     const { config, response: { status } } = error;
     const originalRequest = config;
     if (error?.response?.data?.access === 'blocked') {
-      window.location.href = '/blocked';
+      // window.location.href = '/blocked';
       return Promise.reject(err);
     }
     else if (status === 401 && !originalRequest._retry && !originalRequest.skipAuthRefresh) {
@@ -66,7 +66,7 @@ axiosInstance.interceptors.response.use(
         } catch (err) {
           console.log('Error in refreshing token: ', err);
           Cookies.remove('pondus-jwt-token');
-          const redirectTo = window.location.pathname.startsWith('/staff') ? '/staff/login' : '/login';
+          const redirectTo = window.location.pathname.startsWith('/company') ? '/company/login' : '/login';
           window.location.href = redirectTo;
           return Promise.reject(err);
         }
