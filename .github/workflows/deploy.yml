@@ -67,7 +67,7 @@ jobs:
 
       - name: Move built client files from temp to dist
         run: |
-          mv /var/www/pondus_app/client/temp_build/* /var/www/pondus_app/client/dist/
+          mv -f /var/www/pondus_app/client/temp_build/* /var/www/pondus_app/client/dist/
           rm -rf /var/www/pondus_app/client/temp_build
         working-directory: /var/www/pondus_admin/client
 
