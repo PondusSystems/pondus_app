@@ -43,48 +43,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Fetch main branch
-        run: git fetch origin main
-        working-directory: /var/www/pondus_app
-
-      - name: Get last commit on main
-        id: last_commit
-        run: |
-          LAST_COMMIT=$(git rev-parse origin/main)
-          echo "LAST_COMMIT=${LAST_COMMIT}" >> $GITHUB_ENV
-
-      - name: Check for client changes
-        id: client_changes
-        run: |
-          git diff --name-only ${{ env.LAST_COMMIT }}..HEAD -- client > changes.txt
-          if [ -s changes.txt ]; then
-            echo "client_changes_detected=true" >> $GITHUB_ENV
-            echo "Detected client changes:"
-            cat changes.txt
-          else
-            echo "client_changes_detected=false" >> $GITHUB_ENV
-            echo "No client changes detected."
-          fi
-
-      - name: Check for server changes
-        id: server_changes
-        run: |
-          git diff --name-only ${{ env.LAST_COMMIT }}..HEAD -- server > changes.txt
-          if [ -s changes.txt ]; then
-            echo "server_changes_detected=true" >> $GITHUB_ENV
-            echo "Detected server changes:"
-            cat changes.txt
-          else
-            echo "server_changes_detected=false" >> $GITHUB_ENV
-            echo "No server changes detected."
-          fi
-
-      - name: Merge changes
-        run: git merge origin/main
-        working-directory: /var/www/pondus_app
-
       - name: Cache client dependencies
-        if: ${{ env.client_changes_detected == 'true' }}
         uses: actions/cache@v4
         with:
           path: |
@@ -95,17 +54,14 @@ jobs:
             ${{ runner.os }}-node-client-
 
       - name: Install client dependencies
-        if: ${{ env.client_changes_detected == 'true' }}
         run: npm ci
         working-directory: /var/www/pondus_app/client
 
       - name: Build client
-        if: ${{ env.client_changes_detected == 'true' }}
         run: npm run build
         working-directory: /var/www/pondus_app/client
 
       - name: Cache server dependencies
-        if: ${{ env.server_changes_detected == 'true' }}
         uses: actions/cache@v4
         with:
           path: |
@@ -116,10 +72,8 @@ jobs:
             ${{ runner.os }}-node-server-
 
       - name: Install server dependencies
-        if: ${{ env.server_changes_detected == 'true' }}
         run: npm ci
         working-directory: /var/www/pondus_app/server
 
       - name: Restart server
-        if: ${{ env.server_changes_detected == 'true' }}
         run: pm2 restart "Pondus Server"
