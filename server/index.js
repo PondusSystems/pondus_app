@@ -31,7 +31,7 @@ app.use('/static', express.static(path.join(__dirname, 'static')));
 
 //Server status endpoint
 app.get('/', (req, res) => {
-    res.send('Client Server is Up!');
+    res.send('Client server is running...!');
 });
 
 // Routes
