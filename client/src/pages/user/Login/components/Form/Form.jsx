@@ -95,7 +95,7 @@ const Form = () => {
         <div className="auth-form">
             <div className="login-options">
                 <div className="title">Log into your Account</div>
-                <div className="description">Select your preferred method to log in:</div>
+                {/* <div className="description">Select your preferred method to log in:</div>
                 <div className="social-btns-div">
                     <button className="social-btn" id="social-btn-2">
                         <GoogleIcon />
@@ -106,7 +106,7 @@ const Form = () => {
                         <div className="btn-text">Facebook</div>
                     </button>
                 </div>
-                <div className="seperator">Or</div>
+                <div className="seperator">Or</div> */}
             </div>
             <div className='input-form'>
                 <div className='input-section'>
