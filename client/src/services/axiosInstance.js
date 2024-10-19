@@ -19,6 +19,8 @@ axiosInstance.interceptors.request.use(
       }
     }
     const tenantId = await getTenantId();
+    console.log('Current Tenant Id: ', tenantId);
+
     config.headers['X-Tenant-ID'] = tenantId;
     return config;
   },
