@@ -19,6 +19,8 @@ axiosInstance.interceptors.request.use(
       }
     }
     const tenantId = await getTenantId();
+    console.log('Current Tenant Id: ', tenantId);
+
     config.headers['X-Tenant-ID'] = tenantId;
     return config;
   },
@@ -66,7 +68,7 @@ axiosInstance.interceptors.response.use(
         } catch (err) {
           console.log('Error in refreshing token: ', err);
           Cookies.remove('pondus-jwt-token');
-          const redirectTo = window.location.pathname.startsWith('/staff') ? '/staff/login' : '/login';
+          const redirectTo = window.location.pathname.startsWith('/company') ? '/company/login' : '/login';
           window.location.href = redirectTo;
           return Promise.reject(err);
         }

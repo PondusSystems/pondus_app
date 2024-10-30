@@ -31,6 +31,7 @@ const Form = () => {
         password: "",
     });
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
