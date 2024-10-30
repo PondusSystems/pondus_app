@@ -33,6 +33,7 @@ const Form = () => {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleChange = (event) => {
         let name = event.target.name;
